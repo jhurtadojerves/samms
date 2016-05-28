@@ -68,3 +68,7 @@ target/
 \.metadata/
 Servers/
 target/
+
+#IDE Pycharm
+.idea
+.idea/*
