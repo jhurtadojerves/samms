@@ -9,3 +9,5 @@ class Carrera(models.Model):
     codigo = models.CharField(max_length=32, unique=True)
     nombre = models.TextField(max_length=256)
 
+    def __str__(self):
+        return self.codigo
