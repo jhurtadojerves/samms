@@ -16,9 +16,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     #URLs Periodo
-    url(r'^periodo/migrar/$', 'periodo.views.consumir', name='periodo_migrar'),
+    url(r'^migrar/datos/$', 'periodo.views.consumir', name='periodo_migrar'),
 ]
