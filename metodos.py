@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from suds.sudsobject import asdict
+from datetime import timedelta, date, datetime
 import json
 import unicodedata
+
 
 
 def recursive_asdict(d):
@@ -28,3 +30,7 @@ def suds_to_json(data):
 def remover_acentos(input_str):
     nkfd_form = unicodedata.normalize('NFKD', input_str)
     return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
+
+def rangodefecha(fechainicio, fechafin):
+    for n in range(int ((fechafin - fechainicio).days)):
+        yield fechainicio + timedelta(n)
