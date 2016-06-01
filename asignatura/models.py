@@ -13,3 +13,6 @@ class Asignatura(models.Model):
     nivel =  models.CharField(max_length=16, blank=True, null=True)
     horas = models.IntegerField()
     carrera = models.ForeignKey(Carrera)
+
+    def __str__(self):
+        return self.descripcion

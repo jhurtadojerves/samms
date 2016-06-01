@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from docenteAsignaturaNivelPeriodo.models import DocenteAsignaturaNivelPeriodo
+from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 from estudiante.models import Estudiante
 
 
@@ -9,6 +9,6 @@ from django.db import models
 
 # Create your models here.
 
-class DocenteAsignaturaNivelPeriodo(models.Model):
-    iddocenteasignatura = models.ForeignKey(DocenteAsignaturaNivelPeriodo)
+class DocenteAsignaturaPeriodoEstudiante(models.Model):
+    iddocenteasignatura = models.ForeignKey(DocenteAsignaturaPeriodo)
     idestudiante = models.ForeignKey(Estudiante)

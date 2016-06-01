@@ -55,7 +55,7 @@ def consumir(request):
             pDB.save()
 
         #Obtener Datos de las Carreras
-        carreras = Carrera.objects.all()
+        carreras = Carrera.objects.filter(abierta=True)
 
         #Si existen carreras registradas en la DB continuamos con el proceso de migración
         if(carreras.exists()):

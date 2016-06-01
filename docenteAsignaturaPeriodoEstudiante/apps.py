@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class DocenteasignaturanivelperiodoestudianteConfig(AppConfig):
-    name = 'docenteAsignaturaNivelPeriodoEstudiante'
+    name = 'docenteAsignaturaPeriodoEstudiante'

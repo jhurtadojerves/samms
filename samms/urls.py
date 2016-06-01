@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """samms URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -15,11 +17,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import periodo.views, docente.views, estudiante.views
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    #URLs Periodo
-    url(r'^migrar/datos/$', 'periodo.views.consumir', name='periodo_migrar'),
+    url(r'^$', estudiante.views.home, name='home'),
+
+    #URLs Migrar datos: Periodoy Asignaturas
+    url(r'^migrar/datos/$', periodo.views.consumir, name='migrar_datos'),
+
+    #URLs Docente
+    url(r'^docente/migrar/$', docente.views.migrar_docentes, name='migrar_docente'),
 ]

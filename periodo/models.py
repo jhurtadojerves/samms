@@ -11,3 +11,6 @@ class Periodo(models.Model):
     fechafin = models.DateTimeField()
     descripcion = models.TextField(max_length=32)
     estado = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.codigo

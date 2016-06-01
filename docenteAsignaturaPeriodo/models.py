@@ -9,7 +9,7 @@ from django.db import models
 
 # Create your models here.
 
-class DocenteAsignaturaNivelPeriodo(models.Model):
+class DocenteAsignaturaPeriodo(models.Model):
     docente = models.ForeignKey(Docente)
     periodo = models.ForeignKey(Periodo)
     asignatura = models.ForeignKey(Asignatura)

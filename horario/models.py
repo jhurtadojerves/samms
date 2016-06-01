@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-from docenteAsignaturaNivelPeriodo.models import DocenteAsignaturaNivelPeriodo
+from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 
 # Create your models here.
 
 class Horario(models.Model):
-    asignatura = models.ForeignKey(DocenteAsignaturaNivelPeriodo)
+    asignatura = models.ForeignKey(DocenteAsignaturaPeriodo)
     dias = (
         ('0', 'Lunes'),
         ('1', 'Martes'),

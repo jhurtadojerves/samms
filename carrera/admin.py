@@ -7,6 +7,6 @@ from models import Carrera
 
 @admin.register(Carrera)
 class PeriodoAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'nombre', )
-    list_filter = ('codigo', 'nombre',)
-    ordering = ('codigo', 'nombre',)
+    list_display = ('codigo', 'nombre', 'abierta',)
+    list_filter = ('abierta',)
+    ordering = ('abierta', 'codigo', 'nombre', )

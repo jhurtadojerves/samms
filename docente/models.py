@@ -9,3 +9,6 @@ from django.db import models
 
 class Docente(User):
     cedula = models.CharField(unique=True, max_length=16)
+
+    def __str__(self):
+        return self.first_name + self.last_name
