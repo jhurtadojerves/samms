@@ -10,5 +10,5 @@ from django.db import models
 # Create your models here.
 
 class DocenteAsignaturaPeriodoEstudiante(models.Model):
-    iddocenteasignatura = models.ForeignKey(DocenteAsignaturaPeriodo)
-    idestudiante = models.ForeignKey(Estudiante)
+    docenteasignatura = models.ForeignKey(DocenteAsignaturaPeriodo)
+    estudiante = models.ForeignKey(Estudiante)

@@ -29,5 +29,8 @@ urlpatterns = [
     url(r'^migrar/datos/$', periodo.views.consumir, name='migrar_datos'),
 
     #URLs Docente
-    url(r'^docente/migrar/$', docente.views.migrar_docentes, name='migrar_docente'),
+    url(r'^docentes/migrar/$', docente.views.migrar_docentes, name='migrar_docente'),
+
+    #URLs Estudiantes
+    url(r'^estudiantes/nuevo/$', estudiante.views.migrar_estudiante, name='migrar_estudiante'),
 ]

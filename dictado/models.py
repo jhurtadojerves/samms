@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 from horario.models import Horario
+from estudiante.models import Estudiante
 
 # Create your models here.
 
@@ -18,6 +19,7 @@ class Dictado(models.Model):
         ('2', 'No Aprobado')
     )
     estado = models.CharField(max_length=1, choices=estado_opciones, default='0')
+    revisado_por = models.ForeignKey(Estudiante, null=True)
     comentario = models.CharField(max_length=255)
 
 
