@@ -17,13 +17,18 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth.views import login
 import periodo.views, docente.views, estudiante.views
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    url(r'^$', estudiante.views.home, name='home'),
+    #URLS login, logout, cambiar contraseña
+    url(r'^login/$', login, {'template_name': 'login.html', }, name="login"),
+    url(r'^logout$', docente.views.logout_v, name='logout'),
+    url(r'^perfil/password/$', 'django.contrib.auth.views.password_change', {'post_change_redirect' : '/','template_name': 'password.html'},),
+    url(r'^$', docente.views.home, name='home'),
 
     #URLs Migrar datos: Periodoy Asignaturas
     url(r'^migrar/datos/$', periodo.views.consumir, name='migrar_datos'),

@@ -17,9 +17,7 @@ import webservices, metodos
 
 # Create your views here.
 
-def home(request):
-    #return render(request, '', {}, context_instance=RequestContext(request))
-    return JsonResponse('Bienvenidos al Sistema de Avance Curricular', safe=False)
+
 
 def migrar_estudiante(request):
     if request.method == 'POST':

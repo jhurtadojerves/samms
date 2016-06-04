@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
+from django.template.context import RequestContext
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.contrib.auth import logout
 from django.contrib.admin.views.decorators import staff_member_required
 
 from periodo.models import Periodo
@@ -59,3 +61,12 @@ def migrar_docentes(request):
                     docasig.save()
     return JsonResponse('correcto', safe=False)
 
+def logout_v(request):
+    logout(request)
+    return render(request, 'index.html', {}, context_instance=RequestContext(request))
+
+def home(request):
+    return render(request, 'index.html', {}, context_instance=RequestContext(request))
+
+def login(request):
+    return render(request, 'login.html', {}, context_instance=RequestContext(request))
