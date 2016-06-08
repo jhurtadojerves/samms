@@ -19,22 +19,25 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth.views import login
 import periodo.views, docente.views, estudiante.views
+from asignatura.models import Asignatura
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     #URLS login, logout, cambiar contraseña
-    url(r'^login/$', login, {'template_name': 'login.html', }, name="login"),
+    url(r'^login/$', login, {'template_name': 'login.html', }, name='login'),
     url(r'^logout$', docente.views.logout_v, name='logout'),
-    url(r'^perfil/password/$', 'django.contrib.auth.views.password_change', {'post_change_redirect' : '/','template_name': 'password.html'},),
+    url(r'^perfil/contrasena/$', 'django.contrib.auth.views.password_change', {'post_change_redirect' : '/','template_name': 'password.html'},name='contrasena'),
     url(r'^$', docente.views.home, name='home'),
 
     #URLs Migrar datos: Periodoy Asignaturas
     url(r'^migrar/datos/$', periodo.views.consumir, name='migrar_datos'),
 
     #URLs Docente
-    url(r'^docentes/migrar/$', docente.views.migrar_docentes, name='migrar_docente'),
+    url(r'^docente/migrar/$', docente.views.migrar_docentes, name='migrar_docente'),
+    url(r'^docente/asignatura/$', docente.views.ver_asignaturas, name='ver_asignaturas'),
+    url(r'^docente/asignatura/([^/]+)/$', docente.views.ingresar_dictado, name='ingresar_dictado'),
 
     #URLs Estudiantes
     url(r'^estudiantes/nuevo/$', estudiante.views.migrar_estudiante, name='migrar_estudiante'),

@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Sistema de Avance Microcurricular ESPOCH Morona Santiago</title>
 </head>
 <body>
     <header><h1>SISTEMA DE AVANCE CURRICULAR ESPOCH MORONA SANTIAGO</h1></header>
 
     <main>
-
+        {% if request.user.username != '' %}
+            <p>Bienvenido {{request.user.username}}, su última visita fue el {{ request.user.last_login }}</p>
+            <ul>
+                <li><a href="{% url 'contrasena' %}">Cambiar Contraseña</a></li>
+                <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+            </ul>
+        {% else %}
+            <p>Para utilizar el sistema debe <a href="{% url 'login' %}">Iniciar Sesión</a> </p>
+        {% endif %}
+        
+        
     </main>
 
     <footer>

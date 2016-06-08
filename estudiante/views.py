@@ -56,14 +56,10 @@ def migrar_estudiante(request):
                 #return JsonResponse((resultAsignaturas != ""), safe=False)
                 if (resultAsignaturas != ""):
                     for a in resultAsignaturas[0]:
-
                         tmp = metodos.recursive_asdict(a)
-
                         if Asignatura.objects.filter(codigo = tmp['Codigo']).exists():
                             asignatura = Asignatura.objects.get(codigo=tmp['Codigo'])
-
                             if DocenteAsignaturaPeriodo.objects.filter(asignatura = asignatura, periodo = periodo).exists():
-
                                 docenteAsignatura = DocenteAsignaturaPeriodo.objects.get(asignatura = asignatura, periodo = periodo)
                                 if not (DocenteAsignaturaPeriodoEstudiante.objects.filter(docenteasignatura = docenteAsignatura, estudiante = estudiante).exists()):
                                     docenteAsignaturaEstudiante = DocenteAsignaturaPeriodoEstudiante()
