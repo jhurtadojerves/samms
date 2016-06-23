@@ -26,51 +26,56 @@ import datetime
 import webservices, metodos
 
 # Create your views here.
-
+@staff_member_required
 def migrar_docentes(request):
-    #Instancia de los Servicios Web de Información General
-    clienteGeneral = webservices.infoGeneral()
+    try:
 
-    #Instancia de los servicios Web de Información de Carreras
-    clienteCarrera = webservices.infoCarrera()
+        #Instancia de los Servicios Web de Información General
+        clienteGeneral = webservices.infoGeneral()
 
-    carreras = Carrera.objects.filter(abierta=True)
+        #Instancia de los servicios Web de Información de Carreras
+        clienteCarrera = webservices.infoCarrera()
 
-    for c in carreras:
+        carreras = Carrera.objects.filter(abierta=True)
 
-        asignaturas = Asignatura.objects.filter(carrera = c)
+        for c in carreras:
 
-        docentesAsignatura = list()
-        periodo = Periodo.objects.get(estado=True)
-        for a in asignaturas:
-            docenteResult = clienteCarrera.service.GetDictadosMateria(a.carrera.codigo, a.codigo)
+            asignaturas = Asignatura.objects.filter(carrera = c)
 
-            if (docenteResult):
-                docenteFormat = metodos.recursive_asdict(docenteResult[0][0][3])
+            docentesAsignatura = list()
+            periodo = Periodo.objects.get(estado=True)
+            for a in asignaturas:
+                docenteResult = clienteCarrera.service.GetDictadosMateria(a.carrera.codigo, a.codigo)
 
-                if (Docente.objects.filter(cedula=docenteFormat['Cedula']).exists()):
-                    docente = Docente.objects.get(cedula=docenteFormat['Cedula'])
-                else:
-                    docente = Docente()
-                    docente.cedula = docenteFormat['Cedula']
-                    docente.username = docenteFormat['Cedula']
-                    docente.first_name = metodos.remover_acentos(docenteFormat['Nombres'])
-                    docente.last_name = metodos.remover_acentos(docenteFormat['Apellidos'])
-                    docente.email = docenteFormat['Email']
-                    docente.is_active = 1
-                    docente.is_superuser = 0
-                    docente.is_staff = 0
-                    docente.password = make_password(docenteFormat['Cedula'], salt=None, hasher='default')
-                    docente.save()
+                if (docenteResult):
+                    docenteFormat = metodos.recursive_asdict(docenteResult[0][0][3])
 
-                if not(DocenteAsignaturaPeriodo.objects.filter(docente=docente,asignatura=a,periodo=periodo).exists()):
-                    doc = Docente.objects.get(cedula=docenteFormat['Cedula'])
-                    docasig = DocenteAsignaturaPeriodo()
-                    docasig.docente = doc
-                    docasig.asignatura = a
-                    docasig.periodo = periodo
-                    docasig.save()
-    return JsonResponse('correcto', safe=False)
+                    if (Docente.objects.filter(cedula=docenteFormat['Cedula']).exists()):
+                        docente = Docente.objects.get(cedula=docenteFormat['Cedula'])
+                    else:
+                        docente = Docente()
+                        docente.cedula = docenteFormat['Cedula']
+                        docente.username = docenteFormat['Cedula']
+                        docente.first_name = metodos.remover_acentos(docenteFormat['Nombres'])
+                        docente.last_name = metodos.remover_acentos(docenteFormat['Apellidos'])
+                        if not docenteFormat['Email'] is None:
+                            docente.email = docenteFormat['Email']
+                        docente.is_active = 1
+                        docente.is_superuser = 0
+                        docente.is_staff = 0
+                        docente.password = make_password(docenteFormat['Cedula'], salt=None, hasher='default')
+                        docente.save()
+
+                    if not(DocenteAsignaturaPeriodo.objects.filter(docente=docente,asignatura=a,periodo=periodo).exists()):
+                        doc = Docente.objects.get(cedula=docenteFormat['Cedula'])
+                        docasig = DocenteAsignaturaPeriodo()
+                        docasig.docente = doc
+                        docasig.asignatura = a
+                        docasig.periodo = periodo
+                        docasig.save()
+        return HttpResponse('Docentes Registrados Correctamente')
+    except Exception as e:
+        return HttpResponse(e.args, e)
 
 @login_required()
 def logout_v(request):

@@ -12,13 +12,14 @@ from periodo.models import Periodo
 from  asignatura.models import Asignatura
 from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 from docenteAsignaturaPeriodoEstudiante.models import DocenteAsignaturaPeriodoEstudiante
+from django.contrib.admin.views.decorators import staff_member_required
 
 import webservices, metodos
 
 # Create your views here.
 
 
-
+@staff_member_required
 def migrar_estudiante(request):
     if request.method == 'POST':
         form = EstudianteForm(request.POST)

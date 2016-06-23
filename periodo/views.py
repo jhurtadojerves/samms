@@ -20,7 +20,6 @@ def consumir(request):
         clienteGeneral = webservices.infoGeneral()
         #Instancia de los servicios Web de Información de Carreras
         clienteCarrera = webservices.infoCarrera()
-
         #Obtiene todos los periodos académicos activos
         periodos = Periodo.objects.filter(estado=True)
 
@@ -57,6 +56,8 @@ def consumir(request):
         #Obtener Datos de las Carreras
         carreras = Carrera.objects.filter(abierta=True)
 
+        #carreras = Carrera.objects.get(codigo='IGMMAC')
+
         #Si existen carreras registradas en la DB continuamos con el proceso de migración
         if(carreras.exists()):
             for c in carreras:
@@ -82,6 +83,6 @@ def consumir(request):
                         asig.nivel = k[3]
                         asig.carrera = c
                         asig.save()
-        return JsonResponse('Todo bien <3', safe=False)
-    except:
-        return JsonResponse('Todo mal </3', safe=False)
+        return JsonResponse('Proceso Correcto', safe=False)
+    except Exception as e:
+        return HttpResponse(e.args, e)

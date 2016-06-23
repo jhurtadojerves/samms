@@ -17,6 +17,12 @@
         {% else %}
             <p>Para utilizar el sistema debe <a href="{% url 'login' %}">Iniciar Sesión</a> </p>
         {% endif %}
+
+            <ol>
+                <li><a href="{% url 'migrar_datos' %}" target="_blank">Migrar Datos</a></li>
+                <li><a href="{% url 'migrar_docente' %}" target="_blank">Migrar Docentes</a></li>
+                <li><a href="{% url 'migrar_estudiante' %}" target="_blank">Migrar Estudiante</a></li>
+            </ol>
         
         
     </main>
