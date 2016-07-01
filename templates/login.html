@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Iniciar Sesión
+{% endblock %}
+
+{% block lugar %}Perfil{% endblock %}
+{% block accion %}Iniciar Sesión{% endblock %}
+{% block contenido  %}
+    {% if form.errors %}
+        <p>Su nombre de usuario y contraseña no coinciden. Por favor vuelva a intentarlo</p>
+    {% endif %}
+    <form method="post" class="login-form" action="{% url 'django.contrib.auth.views.login' %}" style="margin:auto auto !important;">
+    {% csrf_token %}
+        <div class="login-wrap">
+            <p class="login-img"><i class="icon_lock_alt" style="color: #34aadc;"></i></p>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="icon_profile"></i></span>
+              <input id="id_username" maxlength="254" name="username" type="text" data-cip-id="id_username" class="form-control" placeholder="Usuario" autofocus>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                <input id="id_password" name="password" type="password" data-cip-id="id_password" class="form-control" placeholder="Password">
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Iniciar Sesión</button>
+        </div>
+    </form>
+
+
+{% endblock %}

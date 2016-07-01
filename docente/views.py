@@ -84,10 +84,10 @@ def logout_v(request):
     #return render(request, 'index.html', {}, context_instance=RequestContext(request))
 
 def home(request):
-    return render(request, 'index.html', {}, context_instance=RequestContext(request))
+    return render(request, '../templates/index.html', {}, context_instance=RequestContext(request))
 
 def login(request):
-    return render(request, 'login.html', {}, context_instance=RequestContext(request))
+    return render(request, '../templates/login.html', {}, context_instance=RequestContext(request))
 
 @login_required()
 def ver_asignaturas(request):
@@ -100,7 +100,7 @@ def ver_asignaturas(request):
     for asignatura in docasig:
         asignaturas.append(asignatura.asignatura)
 
-    return render(request, 'ver_materias.html',{'asignaturas': asignaturas}, context_instance=RequestContext(request))
+    return render(request, 'dictado/ver_materias.html',{'asignaturas': asignaturas}, context_instance=RequestContext(request))
 
 def ingresar_dictado(request, asignatura):
     if request.method == 'POST':
@@ -119,7 +119,7 @@ def ingresar_dictado(request, asignatura):
             dictado.fecha = fecha
             dictado.estado = 0 #Sin Revisa
             dictado.save()
-            return render(request, 'ingresar_dictado_correcto.html', {'dictado': dictado}, context_instance=RequestContext(request))
+            return render(request, 'dictado/ingresar_dictado_correcto.html', {'dictado': dictado}, context_instance=RequestContext(request))
 
     else:
         if(Asignatura.objects.filter(codigo=asignatura).exists()):
@@ -132,7 +132,7 @@ def ingresar_dictado(request, asignatura):
                     horario = Horario.objects.get(asignatura=docasig, dia = datetime.datetime.now().weekday())
                     if not (Dictado.objects.filter(fecha = datetime.datetime.now(), horario=horario ).exists()):
                         form = DictadoFormDocente()
-                        return render(request, 'ingresa_dictado.html', {'form': form}, context_instance=RequestContext(request))
+                        return render(request, 'dictado/ingresa_dictado.html', {'form': form}, context_instance=RequestContext(request))
                     else:
                         error ='La asignatura '+asignatura.descripcion + ' ya cuenta con un tema registrado hoy'
                 else:
@@ -141,4 +141,4 @@ def ingresar_dictado(request, asignatura):
                 error = 'El docente ' + request.user.get_full_name() + ' no tiene registrada la asignatura ' +asignatura.descripcion
         else:
             raise Http404
-    return render(request, 'error_ingresar_dictado.html', {'error': error}, context_instance=RequestContext(request))
+    return render(request, 'dictado/error_ingresar_dictado.html', {'error': error}, context_instance=RequestContext(request))

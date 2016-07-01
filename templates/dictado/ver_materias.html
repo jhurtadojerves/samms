@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Aisgnaturas
+{% endblock %}
+
+{% block lugar %}Asignaturas{% endblock %}
+{% block accion %}Ver{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        <header class="panel-heading">
+              Asignaturas
+        </header>
+        <div class="list-group">
+            {% for asignatura in asignaturas %}
+                <a class="list-group-item" href="{{ asignatura.codigo }}">{{ asignatura.descripcion }}</a>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

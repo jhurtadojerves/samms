@@ -78,4 +78,4 @@ def migrar_estudiante(request):
 
     else:
         form = EstudianteForm()
-    return render(request, 'nuevo.html', {'form':form}, context_instance=RequestContext(request))
+    return render(request, '../templates/estudiante/nuevo.html', {'form':form}, context_instance=RequestContext(request))
