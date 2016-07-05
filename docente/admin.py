@@ -10,3 +10,4 @@ class DocenteAdmin(admin.ModelAdmin):
     list_display = ('cedula','last_name', 'first_name',)
     #list_filter = ('abierta',)
     ordering = ('cedula', 'last_name',)
+    search_fields = ('cedula', 'first_name', 'last_name')

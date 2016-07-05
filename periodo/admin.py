@@ -8,6 +8,6 @@ from models import Periodo
 
 @admin.register(Periodo)
 class PeriodoAdmin(admin.ModelAdmin):
-    list_display = ('codigo', 'descripcion', )
-    list_filter = ('codigo',)
+    list_display = ('codigo', 'descripcion', 'estado' )
+    list_filter = ('codigo', 'estado')
     ordering = ('codigo',)

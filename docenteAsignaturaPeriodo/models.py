@@ -17,5 +17,8 @@ class DocenteAsignaturaPeriodo(models.Model):
     class Meta:
         unique_together = ('asignatura', 'periodo',)
 
-    def __str__(self):
-        return self.docente.get_full_name() + " - " + self.asignatura.descripcion
+    def __unicode__(self):
+        if(self.periodo.estado):
+            return self.asignatura.descripcion + " - ACTUAL"
+        else:
+            return self.asignatura.descripcion

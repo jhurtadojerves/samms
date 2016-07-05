@@ -9,7 +9,6 @@ from models import Dictado
 @admin.register(Dictado)
 class DictadoAdmin(admin.ModelAdmin):
     list_display = ('horario','fecha', 'tema', 'unidad','estado',)
-    list_filter = ('fecha', 'estado')
+    list_filter = ('fecha', 'estado',)
     search_fields = ('estado',)
-    ordering = ('horario', 'fecha', 'estado')
-    #form = DictadoAdminForm
+    ordering = ('horario', 'fecha', 'estado',)

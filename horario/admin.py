@@ -8,5 +8,8 @@ from models import Horario
 @admin.register(Horario)
 class HorarioAdmin(admin.ModelAdmin):
     list_display = ('asignatura','dia', 'inicio', 'fin',)
-    #list_filter = ('abierta',)
+    #list_filter = (('asignatura', admin.RelatedOnlyFieldListFilter),)
+    raw_id_fields = ('asignatura',)
     ordering = ('asignatura', 'dia',)
+
+
