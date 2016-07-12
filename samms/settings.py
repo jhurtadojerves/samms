@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'asignatura',
     'carrera',
-    'dictado',
     'docente',
     'docenteAsignaturaPeriodo',
     'docenteAsignaturaPeriodoEstudiante',
@@ -87,7 +86,7 @@ WSGI_APPLICATION = 'samms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'samms',
+        'NAME': 'avancemacas',
         'USER': 'root',
         'PASSWORD': 'juliohurtado1208',
         'HOST': 'localhost',
@@ -141,5 +140,5 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'

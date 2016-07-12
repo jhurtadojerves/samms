@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Temas Registrados - {{ asignatura.descripcion }} - {{ unidad.nombre }}
+{% endblock %}
+{% block lugar_previo %} <a href="{% url 'ver_unidad' asignatura.codigo %}">{{ asignatura.descripcion }}</a>{% endblock %}
+{% block lugar %}Temas Registrados{% endblock %}
+
+{% block accion %}Ver{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        {% if request.GET.mensaje == "correcto" %}
+        <div class="alert alert-success fade in">
+              <button data-dismiss="alert" class="close close-sm" type="button">
+                  <i class="icon-remove"></i>
+              </button>
+              <strong>¡Listo!</strong> El tema fue ingresado correctamente
+        </div>
+        {% endif %}
+
+        <header class="panel-heading">
+              Temas Registrados - {{ asignatura.descripcion }} - {{ unidad.nombre }}
+        </header>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tema</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tema in temas %}
+                    <tr>
+                        <td>{{ tema.descripcion }}</td>
+                        <td>{{ tema.fecha }}</td>
+                        <td>{{ tema.horario.inicio }} - {{ tema.horario.fin }}</td>
+                        <td>{{ tema.tema_string }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <p>
+            <a class="btn btn-primary" href="tema/nuevo/" title="Nuevo"><span class="icon_plus_alt2"></span> Nuevo</a>
+        </p>
+        </div>
+
+    </section>
+{% endblock %}

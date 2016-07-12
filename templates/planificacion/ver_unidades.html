@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ asignatura.descripcion }}
+{% endblock %}
+
+{% block lugar_previo %}<a href="{% url 'ver_asignaturas' %}">Asignaturas</a>{% endblock %}
+{% block lugar %}{{ asignatura.descripcion }} - Unidades{% endblock %}
+{% block accion %}Ver{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        <header class="panel-heading">
+              {{ asignatura.descripcion }}
+        </header>
+        <div class="list-group">
+            {% for unidad in unidades %}
+                <a class="list-group-item" href="unidad/{{ unidad.id }}">{{ unidad.nombre }}</a>
+            {% endfor %}
+            <a class="list-group-item" href="#"></a>
+            <a class="list-group-item" href="unidad/crear/">Nueva Unidad</a>
+        </div>
+    </section>
+{% endblock %}

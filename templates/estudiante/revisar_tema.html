@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Crear Tema
+{% endblock %}
+
+{% block lugar_previo %}<a href="{% url 'ver_temas_estudiante' %}">Temas</a>{% endblock %}
+{% block lugar %}Revisar{% endblock %}
+{% block accion %}Revisar{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        <header class="panel-heading">
+              Revisar Tema
+        </header>
+
+
+        <form action="" method="POST">
+        {% csrf_token %}
+            {{ form.as_p }}
+        <p><button type="submit" class="btn btn-success btn-lg" title="Aceptar">Enviar</button></p>
+    </form>
+    </section>
+{% endblock %}

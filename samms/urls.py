@@ -18,10 +18,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth.views import login
+#Comentar línea de abajo para la migración inicial
 import periodo.views, docente.views, estudiante.views
+
 from asignatura.models import Asignatura
 
 
+#Comentar URLs de abajo para la migración inicial
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
@@ -37,8 +40,16 @@ urlpatterns = [
     #URLs Docente
     url(r'^docente/migrar/$', docente.views.migrar_docentes, name='migrar_docente'),
     url(r'^docente/asignatura/$', docente.views.ver_asignaturas, name='ver_asignaturas'),
-    url(r'^docente/asignatura/([^/]+)/$', docente.views.ingresar_dictado, name='ingresar_dictado'),
+    #url(r'^docente/asignatura/([^/]+)/$', docente.views.ingresar_dictado, name='ingresar_dictado'),
+    url(r'^docente/asignatura/([^/]+)/$', docente.views.ver_unidad, name='ver_unidad'),
+    url(r'^docente/asignatura/([^/]+)/unidad/crear/$', docente.views.ingresar_unidad, name='ingresar_unidad'),
+    url(r'^docente/asignatura/([^/]+)/unidad/([^/]+)/$', docente.views.ver_temas, name='ver_temas'),
+    url(r'^docente/asignatura/([^/]+)/unidad/([^/]+)/tema/nuevo/$', docente.views.nuevo_tema, name='nuevo_tema'),
 
     #URLs Estudiantes
     url(r'^estudiantes/nuevo/$', estudiante.views.migrar_estudiante, name='migrar_estudiante'),
+    url(r'^estudiantes/temas/$', estudiante.views.ver_temas_estudiante, name='ver_temas_estudiante'),
+    url(r'^estudiantes/temas/revisar/([^/]+)/$', estudiante.views.revisar_tema, name='revisar_tema'),
+
+
 ]

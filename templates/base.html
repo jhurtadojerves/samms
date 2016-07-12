@@ -130,15 +130,34 @@
                   {% endif %}
               {% if request.user.is_authenticated %}
 				  <li class="sub-menu">
-                      <a href="javascript:;" class="">
-                          <i class="icon_document_alt"></i>
-                          <span>Planificación</span>
-                          <span class="menu-arrow arrow_carrot-right"></span>
-                      </a>
-                      <ul class="sub">
-                          <li><a class="" href="#">Crear Unidad</a></li>
-                          <li><a class="" href="#">Crear Tema</a></li>
-                      </ul>
+                      {% if request.user.is_authenticated %}
+                        {% for group in request.user.groups.values_list %}
+                                {% for g in group %}
+                                    {% if g == 'Docentes' %}
+                                        <a href="javascript:;" class="">
+                                              <i class="icon_document_alt"></i>
+                                              <span>Planificación</span>
+                                              <span class="menu-arrow arrow_carrot-right"></span>
+                                          </a>
+                                          <ul class="sub">
+                                              <li><a class="" href="{% url 'ver_asignaturas' %}">Ver Asignaturas</a></li>
+                                          </ul>
+                                    {% endif %}
+                                    {% if g == 'Estudiantes' %}
+                                        <a href="javascript:;" class="">
+                                              <i class="icon_document_alt"></i>
+                                              <span>Aprobar Temas</span>
+                                              <span class="menu-arrow arrow_carrot-right"></span>
+                                          </a>
+                                          <ul class="sub">
+                                              <li><a class="" href="{% url 'ver_temas_estudiante' %}">Ver Temas</a></li>
+                                          </ul>
+                                    {% endif %}
+                                {% endfor %}
+                        {% endfor %}
+
+                      {% endif %} 
+
                   </li>       
                   
                   <li>                     
@@ -165,7 +184,8 @@
 					
 					<ol class="breadcrumb">
 						<li><i class="fa fa-home"></i><a href="{% url 'home' %}">Inicio</a></li>
-						<li><i class="fa fa-laptop"></i>{% block lugar %}{% endblock %}</li>
+						<li><i class="fa fa-laptop"></i>{% block lugar_previo %}{% endblock %}</li>
+                        <li><i class="fa fa-laptop"></i>{% block lugar %}{% endblock %}</li>
 					</ol>
 				</div>
 			</div>                      					                       

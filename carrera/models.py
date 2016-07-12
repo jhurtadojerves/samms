@@ -10,5 +10,5 @@ class Carrera(models.Model):
     nombre = models.TextField(max_length=256)
     abierta = models.BooleanField()
 
-    def __str__(self):
+    def __unicode__(self):
         return self.codigo

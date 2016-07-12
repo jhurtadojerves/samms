@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.template.context import RequestContext
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 from forms import EstudianteForm
+
+from planificacion.forms import RevisarTemaForm
+
 from models import Estudiante
 from carrera.models import Carrera
 from periodo.models import Periodo
@@ -13,8 +18,12 @@ from  asignatura.models import Asignatura
 from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 from docenteAsignaturaPeriodoEstudiante.models import DocenteAsignaturaPeriodoEstudiante
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 
 import webservices, metodos
+
+from planificacion.models import Tema, Unidad
+from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 
 # Create your views here.
 
@@ -79,3 +88,32 @@ def migrar_estudiante(request):
     else:
         form = EstudianteForm()
     return render(request, '../templates/estudiante/nuevo.html', {'form':form}, context_instance=RequestContext(request))
+
+@login_required()
+def ver_temas_estudiante(request):
+    estudiante = get_object_or_404(Estudiante, user_ptr = request.user)
+    periodo = get_object_or_404(Periodo, estado=True)
+    asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo)
+    asigEstudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(estudiante = estudiante)
+    lista = list()
+    for i in asigEstudiante:
+        lista.append(i.docenteasignatura)
+    unidad = Unidad.objects.filter(asignatura__in = lista)
+    temas = Tema.objects.filter(fecha = timezone.now(), unidad__in = unidad, estado=0).order_by('unidad', 'fecha') | Tema.objects.filter(aprobar_otra_fecha = True, unidad__in = unidad, estado = 0)
+    return render(request, 'estudiante/ver_temas.html', {'temas':temas}, context_instance=RequestContext(request))
+
+def revisar_tema(request, id):
+    tema = get_object_or_404(Tema, id = id)
+    estudiante = get_object_or_404(Estudiante, user_ptr = request.user)
+    if request.method == 'POST':
+        form = RevisarTemaForm(request.POST, instance=tema)
+        if form.is_valid():
+            revisar = form.save(commit=False)
+            if int(revisar.estado) != 0:
+                revisar.revisado_por = estudiante
+                revisar.aprobar_otra_fecha = False
+                revisar.save()
+            return HttpResponseRedirect(reverse('ver_temas_estudiante')+"?mensaje=correcto")
+    else:
+        form = RevisarTemaForm(instance=tema)
+    return render(request, 'estudiante/revisar_tema.html', {'form':form}, context_instance=RequestContext(request))
