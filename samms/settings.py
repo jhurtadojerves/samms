@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'horario',
     'periodo',
     'planificacion',
+    'wkhtmltopdf',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -135,6 +136,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+STATIC_ROOT = '/static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
@@ -142,3 +144,9 @@ STATICFILES_DIRS = (
 
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
+
+#WKHTMLTOPDF_CMD = '/path/to/my/wkhtmltopdf'
+WKHTMLTOPDF_CMD = '/usr/bin/wkhtmltopdf'
+WKHTMLTOPDF_CMD_OPTIONS = {
+    'quiet': True,
+}

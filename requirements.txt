@@ -1,5 +1,4 @@
 Django==1.9.6
+django-wkhtmltopdf==3.0.0
 MySQL-python==1.2.5
-argparse==1.2.1
 suds==0.4
-wsgiref==0.1.2

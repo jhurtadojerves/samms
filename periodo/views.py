@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
-
+from django.core.urlresolvers import reverse
 from models import Periodo
 from carrera.models import Carrera
 from asignatura.models import Asignatura
@@ -83,6 +83,7 @@ def consumir(request):
                         asig.nivel = k[3]
                         asig.carrera = c
                         asig.save()
-        return JsonResponse('Proceso Correcto', safe=False)
+        return HttpResponseRedirect(reverse('home')+"?migrar=correcto")
+        #return JsonResponse('Proceso Correcto', safe=False)
     except Exception as e:
-        return HttpResponse(e.args, e)
+        return HttpResponseRedirect(reverse('home') + "?migrar=error")

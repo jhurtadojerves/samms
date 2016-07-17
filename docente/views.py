@@ -73,9 +73,9 @@ def migrar_docentes(request):
                         docasig.asignatura = a
                         docasig.periodo = periodo
                         docasig.save()
-        return HttpResponse('Docentes Registrados Correctamente')
+        return HttpResponseRedirect(reverse('home') + "?migrar=correcto")
     except Exception as e:
-        return HttpResponse(e.args, e)
+        return HttpResponseRedirect(reverse('home') + "?migrar=error")
 
 @login_required()
 def logout_v(request):

@@ -8,7 +8,6 @@ from horario.models import Horario
 from estudiante.models import Estudiante
 from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 
-
 # Create your models here.
 
 class Unidad(models.Model):
@@ -33,7 +32,6 @@ class Tema(models.Model):
     comentario = models.TextField(max_length=256, null=True, blank = True)
     aprobar_otra_fecha = models.BooleanField(default=False)
 
-
     def tema_string(self):
         return dict(Tema.estado_opciones)[self.estado]
 
@@ -48,4 +46,3 @@ class Tema(models.Model):
             #raise forms.ValidationError('Horario no definido')
     class Meta:
         unique_together = ('unidad', 'fecha',)
-

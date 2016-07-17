@@ -10,6 +10,17 @@ import re
 c = Carrera.objects.filter(abierta = True)
 options = list()
 
+class FechasReporte(forms.Form):
+	inicio = forms.DateField()
+	fin = forms.DateField()
+
+	def __init__(self, *args, **kwargs):
+		super(FechasReporte, self).__init__(*args, **kwargs)
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({
+				'class': 'form-control'
+			})
+
 class EstudianteForm(forms.Form):
     cedula = forms.CharField(max_length=11, label='Cedula Estudiante', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
@@ -34,4 +45,12 @@ class EstudianteForm(forms.Form):
             else:
                 raise forms.ValidationError('Ingrese una cédula válida')
         else:
-            raise forms.ValidationError('Ingrese una cédula con el formato 000000000-0')
+            raise forms.ValidationError('Ingrese una cédula con el formato 123456789-0')
+
+    def __init__(self, *args, **kwargs):
+        super(EstudianteForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+

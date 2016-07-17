@@ -7,5 +7,25 @@ Sistema de Avance Microcurricular ESPOCH Morona Santiago
 {% block lugar %}{% endblock %}
 {% block accion %}Inicio{% endblock %}
         {% block contenido  %}
+
+        {% if request.GET.migrar == "correcto" %}
+            <div class="alert alert-success fade in">
+                  <button data-dismiss="alert" class="close close-sm" type="button">
+                      <i class="icon-remove"></i>
+                  </button>
+                  <strong>¡Listo!</strong> Los datos se migraron correctamente
+            </div>
+        {% endif %}
+
+        {% if request.GET.migrar == "error" %}
+            <div class="alert alert-block alert-danger fade in">
+                  <button data-dismiss="alert" class="close close-sm" type="button">
+                      <i class="icon-remove"></i>
+                  </button>
+                  <strong>¡Lo sentimos!</strong> Ha sucedido un error. Póngase en contacto con el <a href="mailto:admin@samms.edu.ec">administrador</a> del sitio
+            </div>
+        {% endif %}
+
+
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, ut, voluptatem. Totam tempora labore obcaecati beatae nam sed necessitatibus veritatis vel, impedit ab non in magnam, doloremque vero blanditiis aliquam.
         {% endblock %}
