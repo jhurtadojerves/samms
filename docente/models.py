@@ -13,12 +13,3 @@ class Docente(User):
 
 	def __unicode__(self):
 		return self.first_name + " " + self.last_name
-
-	def clean(self):
-		if (Group.objects.filter(name='Docentes').exists()):
-			grupo = Group.objects.get(name='Docentes')
-			self.user.groups.add(grupo)
-		else:
-			grupo = Group.objects.create(name="Docentes")
-			self.user.groups.add(grupo)
-		return self
