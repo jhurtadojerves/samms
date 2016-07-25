@@ -185,7 +185,10 @@
 
                   </li>       
                   
-
+                {% else %}
+                  <li>
+                                    <a href="{% url 'login' %}"><i class="icon_key_alt"></i>Iniciar Sesión</a>
+                                </li>
               {% endif %}
               </ul>
               <!-- sidebar menu end-->
