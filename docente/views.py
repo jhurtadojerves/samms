@@ -21,6 +21,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 
 from planificacion.forms import DictadoFormDocente, UnidadForm
+from estudiante.forms import FechasReporte
+from wkhtmltopdf.views import PDFTemplateResponse
 
 import datetime
 
@@ -216,3 +218,69 @@ def ingresar_dictado(request, asignatura):
 		else:
 			raise Http404
 	return render(request, 'planificacion/error_ingresar_dictado.html', {'error': error}, context_instance=RequestContext(request))
+
+def ver_materia_reporte(request):
+	docente = get_object_or_404(Docente, user_ptr=request.user)
+	periodo = get_object_or_404(Periodo, estado=True)
+	#asignatura = get_object_or_404(Asignatura, codigo = id)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente = docente)
+	#asigEstudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(estudiante=estudiante)
+
+	return render(request, 'docente/ver_asignaturas.html', {'asignaturas': asignaturas}, context_instance=RequestContext(request))
+
+def ver_reporte_input_fechas(request, id):
+	docente = get_object_or_404(Docente, user_ptr = request.user)
+	asignatura = get_object_or_404(Asignatura, codigo = id)
+	periodo = get_object_or_404(Periodo, estado = True)
+	asigperiodo = DocenteAsignaturaPeriodo.objects.filter(asignatura = asignatura, periodo = periodo, docente =  docente)
+	#asigestudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(docenteasignatura__in=asigperiodo, estudiante = estudiante)
+	horario = Horario.objects.filter(asignatura__in = asigperiodo)
+	if request.method == 'POST':
+		form = FechasReporte(request.POST)
+		if form.is_valid():
+			inicio =  form['inicio'].value()
+			fin = form['fin'].value()
+			temas = Tema.objects.filter(horario__in=horario, fecha__range = (inicio, fin))
+			return PDFTemplateResponse(request, "reportes/docente.html", {'temas': temas, 'asignatura': asignatura})
+	else:
+		form = FechasReporte()
+	return render(request, 'estudiante/form_reporte.html', {'form': form}, context_instance=RequestContext(request))
+
+@staff_member_required()
+def coordinador_buscar_docentes(request):
+	return render(request, 'docente/buscar.html', {}, context_instance=RequestContext(request))
+
+def busqueda(request):
+	if request.is_ajax():
+		docente = Docente.objects.filter(first_name__startswith=request.GET['nombre']).values('first_name', 'last_name', 'id') | Docente.objects.filter(last_name__startswith=request.GET['nombre']).values('first_name', 'last_name', 'id') | Docente.objects.filter(cedula__startswith=request.GET['nombre']).values('first_name', 'last_name', 'id')
+		return JsonResponse(list(docente), safe=False)
+	else:
+		return HttpResponse("Solo se permiten consultas mediante AJAX")
+
+def coordinador_reporte_materias(request, id):
+	docente = get_object_or_404(Docente, user_ptr=id)
+	periodo = get_object_or_404(Periodo, estado=True)
+	#asignatura = get_object_or_404(Asignatura, codigo = id)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente)
+	#asigEstudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(estudiante=estudiante)
+	lista = list()
+	for i in asignaturas:
+		lista.append(i.asignatura)
+	return render(request, 'reportes/ver_asignaturas.html', {'asignaturas': asignaturas, 'docente': docente}, context_instance=RequestContext(request))
+
+def coordinador_reporte_materias_todo(request, id):
+	docente = get_object_or_404(Docente, user_ptr=id)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente)
+	asignaturasClean = list()
+	temasClean = list()
+	for i in asignaturas:
+		asignaturasClean.append(i.asignatura)
+	horario = Horario.objects.filter(asignatura__in = asignaturas)
+	temas = Tema.objects.filter(horario__in = horario, fecha__range = (periodo.fechainicio, periodo.fechafin))
+
+	#return HttpResponse(temas)
+	return PDFTemplateResponse(request, 'reportes/semestre_coordinador.html', {'asignaturas': asignaturasClean, 'temas': temas, 'docente': docente})
+	#return render(request, 'reportes/semestre_coordinador.html', , context_instance=RequestContext(request))
+
+

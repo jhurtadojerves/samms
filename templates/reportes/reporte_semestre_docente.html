@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>{{ docente.first_name }} {{ docente.last_name }}</h3>
+
+    {% for asignatura in asignaturas %}
+        <h2>{{ asignatura.descripcion }}</h2>
+        <table border="1">
+        {% for i in temas %}
+            {{ i.unidad.asignatura.asignatura.id }}
+            {{ asignatura.id }}
+            {% if i.unidad.asignatura.asignatura.id == asignatura.id %}
+                <tr><td>{{ i.descripcion }}</td></tr>
+            {% endif %}
+        {% endfor %}
+        </table>
+    {% endfor %}
+</body>
+</html>

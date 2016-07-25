@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Reportes - Asignaturas
+{% endblock %}
+{% block lugar_previo %} {% endblock %}
+{% block lugar %}Reportes{% endblock %}
+
+{% block accion %}Ver Asignaturas{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        <header class="panel-heading">
+              Asignaturas
+        </header>
+
+       <div class="list-group">
+            {% for asignatura in asignaturas %}
+                <a class="list-group-item" href="">{{ asignatura.asignatura.descripcion }}</a>
+            {% endfor %}
+        </div>
+        <p>
+            <a class="btn btn-primary" href="pdf/" title="Imprimir" target="__blank"><span class="icon_plus_alt2"></span> Imprimir</a>
+        </p>
+
+    </section>
+{% endblock %}

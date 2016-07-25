@@ -139,9 +139,6 @@ def ver_materia_reportes(request, id):
 	return render(request, 'estudiante/ver_temas.html', {'temas': temas}, context_instance=RequestContext(request))
 
 
-
-	return PDFTemplateResponse(request, "reportes/estudiante.html", {'algo': 'algo'})
-
 def ver_materia_reporte(request):
 	estudiante = get_object_or_404(Estudiante, user_ptr=request.user)
 	periodo = get_object_or_404(Periodo, estado=True)
@@ -171,9 +168,9 @@ def ver_reporte_input_fechas(request, id):
 		if form.is_valid():
 			inicio =  form['inicio'].value()
 			fin = form['fin'].value()
-		temas = Tema.objects.filter(horario__in=horario, fecha__range = (inicio, fin))
+			temas = Tema.objects.filter(horario__in=horario, fecha__range = (inicio, fin))
 
-		return PDFTemplateResponse(request, "reportes/estudiante.html", {'temas': temas, 'asignatura': asignatura})
+			return PDFTemplateResponse(request, "reportes/estudiante.html", {'temas': temas, 'asignatura': asignatura})
 	else:
 		form = FechasReporte()
 	return render(request, 'estudiante/form_reporte.html', {'form': form}, context_instance=RequestContext(request))
