@@ -220,6 +220,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>Código</th>
                         <th>Tema</th>
                         <th>Fecha</th>
                         <th>Hora</th>
@@ -229,7 +230,8 @@
                 <tbody>
                 {% for tema in temas %}
                     <tr>
-                        <td>{{ tema.descripcion }}</td>
+                        <td>{{ tema.id }}</td>
+                        <td>{{ tema.nombre }}</td>
                         <td>{{ tema.fecha }}</td>
                         <td>{{ tema.horario.inicio }} - {{ tema.horario.fin }}</td>
                         <td>{{ tema.tema_string }}</td>

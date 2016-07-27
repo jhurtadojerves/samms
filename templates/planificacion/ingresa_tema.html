@@ -9,9 +9,17 @@
 {% block contenido  %}
     <section class="panel">
         <header class="panel-heading">
-              Crear Tema
+              Crear Tema - {{ unidad.asignatura.asignatura.descripcion }} - {{ unidad.nombre }}
         </header>
-
+        <br>
+        {% if bandera %}
+            <div class="alert alert-block alert-danger fade in">
+              <button data-dismiss="alert" class="close close-sm" type="button">
+                  <i class="icon-remove"></i>
+              </button>
+              <strong>¡Lo sentimos!</strong> El horario ingresado no coincide con la fecha seleccionada
+        </div>
+        {% endif %}
 
         <form action="" method="POST">
         {% csrf_token %}

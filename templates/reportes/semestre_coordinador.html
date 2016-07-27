@@ -236,7 +236,7 @@
                 {% for tema in temas %}
                     {% if tema.unidad.asignatura.asignatura.id == asignatura.id %}
                     <tr>
-                        <td>{{ tema.descripcion }}</td>
+                        <td>{{ tema.nombre }}</td>
                         <td>{{ tema.fecha }}</td>
                         <td>{{ tema.horario.inicio }} - {{ tema.horario.fin }}</td>
                         <td>{{ tema.tema_string }}</td>

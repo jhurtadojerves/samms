@@ -123,7 +123,7 @@ def revisar_tema(request, id):
 			return HttpResponseRedirect(reverse('ver_temas_estudiante')+"?mensaje=correcto")
 	else:
 		form = RevisarTemaForm(instance=tema)
-	return render(request, 'estudiante/revisar_tema.html', {'form':form}, context_instance=RequestContext(request))
+	return render(request, 'estudiante/revisar_tema.html', {'form':form, 'tema':tema}, context_instance=RequestContext(request))
 
 def ver_materia_reportes(request, id):
 	estudiante = get_object_or_404(Estudiante, user_ptr=request.user)

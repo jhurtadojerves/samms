@@ -10,14 +10,19 @@
 {% block contenido  %}
     <section class="panel">
         <header class="panel-heading">
-              {{ asignatura.descripcion }}
+              {{ asignatura.descripcion }} - Unidades Ingresadas - Seleccionar
         </header>
         <div class="list-group">
             {% for unidad in unidades %}
                 <a class="list-group-item" href="unidad/{{ unidad.id }}">{{ unidad.nombre }}</a>
+                <a class="list-group-item" href="unidad/{{ unidad.id }}">{{ unidad.nombre }}</a>
             {% endfor %}
-            <a class="list-group-item" href="#"></a>
-            <a class="list-group-item" href="unidad/crear/">Nueva Unidad</a>
+
+
         </div>
+
+            <p>
+                <a class="btn btn-primary" href="unidad/crear/" title="Nuevo"><span class="icon_plus_alt2"></span> Nuevo</a>
+            </p>
     </section>
 {% endblock %}

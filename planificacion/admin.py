@@ -8,9 +8,10 @@ from models import Tema, Unidad
 
 @admin.register(Tema)
 class TemaAdmin(admin.ModelAdmin):
-    list_display = ['descripcion', 'fecha', 'estado', 'aprobar_otra_fecha']
+    list_display = ('nombre', 'fecha', 'estado', 'unidad', 'horario', 'aprobar_otra_fecha', 'razon_aprobar_otra_fecha',)
     raw_id_fields = ('unidad', 'horario')
-    list_editable = ['aprobar_otra_fecha',]
+    list_editable = ('aprobar_otra_fecha', 'razon_aprobar_otra_fecha')
+    search_fields = ('id',)
 
 @admin.register(Unidad)
 class UnidadAdmin(admin.ModelAdmin):

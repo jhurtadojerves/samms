@@ -215,11 +215,12 @@
 
     </head>
 <body style = "height: 100%;">
-    <img src="https://pedrochacha.files.wordpress.com/2012/12/espoch.gif" alt="">
+    <img src="http://i.imgur.com/FmvGlGV.gif" alt="">
     <h2>{{ asignatura.descripcion }}</h2>
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>Código</th>
                         <th>Tema</th>
                         <th>Fecha</th>
                         <th>Hora</th>
@@ -230,11 +231,12 @@
                 <tbody>
                 {% for tema in temas %}
                     <tr>
-                        <td>{{ tema.descripcion }}</td>
+                        <td>{{ tema.id }}</td>
+                        <td>{{ tema.nombre }}</td>
                         <td>{{ tema.fecha }}</td>
                         <td>{{ tema.horario.inicio }} - {{ tema.horario.fin }}</td>
                         <td>{{ tema.tema_string }}</td>
-                        <td>{{ tema.revisado_por.first_name }}</td>
+                        <td>{{ tema.revisado_por.first_name }} {{ tema.revisado_por.last_name }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

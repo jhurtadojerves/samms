@@ -7,7 +7,18 @@
     <link rel="shortcut icon" href="img/favicon.png">
 
     <title>{% block title %}{% endblock %}</title>
-    <script src="{% static 'jquery.min.js'%}"></script>
+        <!-- cdn for modernizr, if you haven't included it already -->
+        <script src="{% static 'jquery.min.js'%}"></script>
+        <script src="{% static 'js/modernizr.js' %}"></script>
+        <!-- polyfiller file to detect and load polyfills -->
+        <script src="http://cdn.jsdelivr.net/webshim/1.12.4/polyfiller.js"></script>
+        <script>
+          webshims.setOptions('waitReady', false);
+          webshims.setOptions('forms-ext', {types: 'date'});
+          webshims.polyfill('forms forms-ext');
+        </script>
+
+
     <!-- Bootstrap CSS -->    
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- bootstrap theme -->
@@ -64,7 +75,7 @@
                             </span>
                             <span class="username">
                                 {% if request.user.is_authenticated %}
-                                    {{ request.user.username }}
+                                    {{ request.user.first_name }} {{ request.user.last_name }}
                                 {% else %}
                                     Invitado
                                 {% endif %}
@@ -112,7 +123,7 @@
                   </li>
                   {% if request.user.is_superuser %}
                       <li class="sub-menu">
-                          <a href="javascript:;" class="">
+                          <a href="#" class="">
                               <i class="icon_document_alt"></i>
                               <span>Admin</span>
                               <span class="menu-arrow arrow_carrot-right"></span>
@@ -127,68 +138,58 @@
 
                       <li>
                   {% endif %}
-              {% if request.user.is_authenticated %}
-				  <li class="sub-menu">
-                      {% if request.user.is_authenticated %}
-                        {% for group in request.user.groups.values_list %}
-                                {% for g in group %}
-                                    {% if g == 'Coordinador' %}
-                                        <li>
-                                              <a class="" href="{% url 'coordinador_buscar_docentes' %}">
-                                                  <i class="icon_piechart"></i>
-                                                  <span>Reportes COORDINADOR ACADÉMICO</span>
-                                              </a>
+            {% if request.user.is_authenticated %}
+                {% for group in request.user.groups.values_list %}
+                    {% for g in group %}
+                        {% if g == 'Coordinador' %}
+                            <li class="">
+                                  <a class="" href="{% url 'coordinador_buscar_docentes' %}">
+                                      <i class="icon_piechart"></i>
+                                      <span>Reportes Generales</span>
+                                  </a>
+                            </li>
 
-                                          </li>
-                                    {% endif %}
+                        {% endif %}
 
-                                    {% if g == 'Docentes' %}
-                                        <a href="javascript:;" class="">
-                                              <i class="icon_document_alt"></i>
-                                              <span>Planificación</span>
-                                              <span class="menu-arrow arrow_carrot-right"></span>
-                                          </a>
-                                          <ul class="sub">
-                                              <li><a class="" href="{% url 'ver_asignaturas' %}">Ver Asignaturas</a></li>
-                                          </ul>
-                                        <li>
-                                              <a class="" href="{% url 'docente_ver_materia_reporte' %}">
-                                                  <i class="icon_piechart"></i>
-                                                  <span>Reportes</span>
-
-                                              </a>
-
-                                          </li>
-                                    {% endif %}
-                                    {% if g == 'Estudiantes' %}
-                                        <a href="javascript:;" class="">
-                                              <i class="icon_document_alt"></i>
-                                              <span>Aprobar Temas</span>
-                                              <span class="menu-arrow arrow_carrot-right"></span>
-                                          </a>
-                                          <ul class="sub">
-                                              <li><a class="" href="{% url 'ver_temas_estudiante' %}">Ver Temas</a></li>
-                                          </ul>
-                                        <li>
-                                              <a class="" href="{% url 'ver_materia_reporte' %}">
-                                                  <i class="icon_piechart"></i>
-                                                  <span>Reportes</span>
-
-                                              </a>
-
-                                          </li>
-                                    {% endif %}
-                                {% endfor %}
-                        {% endfor %}
-
-                      {% endif %} 
-
-                  </li>       
-                  
-                {% else %}
-                  <li>
-                                    <a href="{% url 'login' %}"><i class="icon_key_alt"></i>Iniciar Sesión</a>
+                        {% if g == 'Docentes' %}
+                                <li class="">
+                                  <a class="" href="{% url 'ver_asignaturas' %}">
+                                      <i class="icon_document_alt"></i>
+                                      <span>Planificación</span>
+                                  </a>
                                 </li>
+
+                                <li class="">
+                                  <a class="" href="{% url 'docente_ver_materia_reporte' %}">
+                                      <i class="icon_piechart"></i>
+                                      <span>Reportes</span>
+                                  </a>
+                            </li>
+                        {% endif %}
+
+                        {% if g == 'Estudiantes' %}
+
+                            <li class="">
+                                  <a class="" href="{% url 'ver_temas_estudiante' %}">
+                                      <i class="icon_document_alt"></i>
+                                      <span>Revisar Temas</span>
+                                  </a>
+                            </li>
+
+                            <li class="">
+                                  <a class="" href="{% url 'ver_materia_reporte' %}">
+                                      <i class="icon_piechart"></i>
+                                      <span>Reportes</span>
+                                  </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+
+                {% else %}
+                    <li>
+                        <a href="{% url 'login' %}"><i class="icon_key_alt"></i>Iniciar Sesión</a>
+                    </li>
               {% endif %}
               </ul>
               <!-- sidebar menu end-->

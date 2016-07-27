@@ -1,20 +1,26 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Asignaturas
+    Reportes - Asignaturas
 {% endblock %}
+{% block lugar_previo %} {% endblock %}
+{% block lugar %}Reportes{% endblock %}
 
-{% block lugar %}Asignaturas{% endblock %}
-{% block accion %}Ver{% endblock %}
+{% block accion %}Ver Asignaturas{% endblock %}
 {% block contenido  %}
     <section class="panel">
         <header class="panel-heading">
-              Asignaturas - Seleccionar
+              Asignaturas
         </header>
-        <div class="list-group">
+
+       <div class="list-group">
             {% for asignatura in asignaturas %}
                 <a class="list-group-item" href="{{ asignatura.codigo }}">{{ asignatura.descripcion }}</a>
             {% endfor %}
         </div>
+       <!-- <p>
+            <a class="btn btn-primary" href="pdf/" title="Imprimir" target="__blank"><span class="icon_plus_alt2"></span> Imprimir</a>
+        </p>-->
+
     </section>
 {% endblock %}
