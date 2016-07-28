@@ -62,8 +62,9 @@ urlpatterns = [
 	url(r'^reportes/docente/([^/]+)/pdf/$', 'docente.views.coordinador_reporte_materias_todo', name = 'coordinador_reporte_materias_todo'),
 
 	url(r'^reportes/xls/descargar/$', coordinador_reporte_materias_todo_xls.as_view(), name = 'coordinador_reporte_materias_todo_xls'),
-	url(r'^reportes/xls/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls', name = 'coordinador_asignaturas_xls'),
-	url(r'^reportes/xls/([^/]+)/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls_asig', name = 'coordinador_asignaturas_xls_asig'),
+	url(r'^reportes/xls/$', 'docente.views.coordinador_buscar_docentes_excel', name = 'coordinador_buscar_docentes_excel'),
+	url(r'^reportes/xls/docente/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls', name = 'coordinador_asignaturas_xls'),
+	url(r'^reportes/xls/docente/([^/]+)/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls_asig', name = 'coordinador_asignaturas_xls_asig'),
 
 
 ]

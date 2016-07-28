@@ -276,6 +276,10 @@ def ver_reporte_input_fechas(request, id):
 def coordinador_buscar_docentes(request):
 	return render(request, 'docente/buscar.html', {}, context_instance=RequestContext(request))
 
+@staff_member_required()
+def coordinador_buscar_docentes_excel(request):
+	return render(request, 'docente/buscar_excel.html', {}, context_instance=RequestContext(request))
+
 
 def busqueda(request):
 	if request.is_ajax():
@@ -378,18 +382,32 @@ def coordinador_asignaturas_xls(request, id):
 
 
 def coordinador_asignaturas_xls_asig(request, id, id2):
-	filename = 'excelfile.xlsx'
+	docente = get_object_or_404(Docente, user_ptr=id)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignatura = get_object_or_404(Asignatura, codigo=id2)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente, asignatura=asignatura)
+	filename = docente.cedula + '-'+asignatura.codigo+'.xls'
 
 	# return HttpResponse(temas)
 
 	wb = xlsxwriter.Workbook(filename)
 
-	sheet = wb.add_worksheet('sheet1')
+	reporte = wb.add_worksheet('sheet1')
+
+	reporte.set_column(0, 0,30)
+	reporte.set_column(1, 0, 30)
+	reporte.set_column(2, 0, 30)
+	#reporte.set_column(4, 0, 90)
 
 	num_format = wb.add_format({
 		'num_format': '0',
 		'align': 'right',
 		'font_size': 12,
+
+	})
+
+	formato_negrita = wb.add_format({
+		'bold': True
 	})
 
 	general_format = wb.add_format({
@@ -397,10 +415,8 @@ def coordinador_asignaturas_xls_asig(request, id, id2):
 		'font_size': 12,
 	})
 
-	docente = get_object_or_404(Docente, user_ptr=id)
-	periodo = get_object_or_404(Periodo, estado=True)
-	asignatura = get_object_or_404(Asignatura, codigo=id2)
-	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente, asignatura=asignatura)
+
+
 	asignaturasClean = list()
 	temasClean = list()
 	for i in asignaturas:
@@ -408,16 +424,59 @@ def coordinador_asignaturas_xls_asig(request, id, id2):
 	horario = Horario.objects.filter(asignatura__in=asignaturas)
 	temas = Tema.objects.filter(horario__in=horario, fecha__range=(periodo.fechainicio, periodo.fechafin))
 
-	sheet.write(1, 0, (docente.first_name + " " + docente.last_name))
+	reporte.merge_range(0, 0, 0, 2, asignatura.descripcion)
+	reporte.merge_range(1, 0, 1, 2, (docente.first_name + " " + docente.last_name))
+
+	reporte.write(3, 0, "Tema", formato_negrita)
+	reporte.write(3, 1, "Unidad", formato_negrita)
+	reporte.write(3, 2, "Estado", formato_negrita)
 
 	row = 3
 
+	valores = {'0':0, '1': 0, '2':0}
+
 	for tema in temas:
 		row += 1
-		sheet.write_row(row, 0, (tema.descripcion, tema.unidad.nombre, tema.tema_string()))
+		reporte.write_row(row, 0, (tema.nombre, tema.unidad.nombre, tema.tema_string()))
+		valores[tema.estado] = valores[tema.estado] + 1
+
+
+
+	row = row + 3
+
+	reporte.write(row, 0, "Estado", formato_negrita)
+	reporte.write(row, 1, "Cantidad", formato_negrita)
+	row += 1
+	inicio = row
+
+	reporte.write(row, 0 , "Sin Revisar")
+	reporte.write(row, 1, valores['0'])
+	row += 1
+	reporte.write(row, 0, "Aprobados")
+	reporte.write(row, 1, valores['1'])
+	row += 1
+	reporte.write(row, 0, "No Aprobados")
+	reporte.write(row, 1, valores['2'])
+
+
+
+	chart = wb.add_chart({'type': 'pie'})
+
+	chart.title_name = 'Temas'
+
+	chart.width = reporte._size_col(0)
+
+	values = '=%s!%s' % (reporte.name, xl_range_abs(inicio,1,inicio+2,1))
+	categories = '=%s!%s' % (reporte.name, xl_range_abs(inicio,0,inicio+2,0))
+	chart.add_series({'values': values, 'categories': categories, 'smooth': True})
+
+	reporte.insert_chart(inicio+4, 0, chart)
+
 
 	wb.close()
 	output = open(filename)
+	nombre = 'attachment; filename='+filename
 	response = HttpResponse(output, content_type="application/ms-excel")
-	response['Content-Disposition'] = 'attachment; filename=Excel.xls'
+	#response['Content-Disposition'] = 'attachment; filename=Excel.xls'
+	response['Content-Disposition'] = nombre
 	return response
