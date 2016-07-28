@@ -72,3 +72,7 @@ target/
 #IDE Pycharm
 .idea
 .idea/*
+
+
+*.xlsx
+*.xls
