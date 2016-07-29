@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render, get_object_or_404
+from django.http import Http404
 from django.template.context import RequestContext
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User, Group
+from django.db.models import Q
 
 from wkhtmltopdf.views import PDFTemplateResponse
 
@@ -110,8 +112,17 @@ def ver_temas_estudiante(request):
 	return render(request, 'estudiante/ver_temas.html', {'temas':temas}, context_instance=RequestContext(request))
 
 def revisar_tema(request, id):
-	tema = get_object_or_404(Tema, id = id)
+
+	tema = get_object_or_404(Tema, Q(fecha = timezone.now()) | Q(aprobar_otra_fecha = True), id = id)
+
 	estudiante = get_object_or_404(Estudiante, user_ptr = request.user)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, asignatura=tema.horario.asignatura.asignatura)
+	asigEstudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(estudiante=estudiante)
+	if not (
+	DocenteAsignaturaPeriodoEstudiante.objects.filter(estudiante=estudiante, docenteasignatura__in=asignaturas).exists()):
+		raise Http404()
+
 	if request.method == 'POST':
 		form = RevisarTemaForm(request.POST, instance=tema)
 		if form.is_valid():

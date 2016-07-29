@@ -2,3 +2,4 @@ Django==1.9.6
 django-wkhtmltopdf==3.0.0
 MySQL-python==1.2.5
 suds==0.4
+XlsxWriter==0.9.3
