@@ -141,7 +141,7 @@
             {% if request.user.is_authenticated %}
                 {% for group in request.user.groups.values_list %}
                     {% for g in group %}
-                        {% if g == 'Coordinador' %}
+                        {% if g == 'Coordinador' or g == 'Director'%}
                             <li class="">
                                   <a class="" href="{% url 'coordinador_buscar_docentes' %}">
                                       <i class="icon_piechart"></i>
@@ -150,6 +150,15 @@
                                 <a class="" href="{% url 'coordinador_buscar_docentes_excel' %}">
                                       <i class="icon_table"></i>
                                       <span>Reportes Excel</span>
+                                  </a>
+                            </li>
+
+                        {% endif %}
+                        {% if g == 'Coordinador'%}
+                            <li class="">
+                                <a class="" href="/admin" target="_blank">
+                                      <i class="icon_table"></i>
+                                      <span>Horarios</span>
                                   </a>
                             </li>
 

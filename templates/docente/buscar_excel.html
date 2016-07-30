@@ -40,6 +40,9 @@
                         $("#resultDocente").append("<a class='list-group-item' href=docente/"+data[i].id+">"+data[i].first_name + " " + data[i].last_name+"</a>");
                     }
                     if(consulta == ""){$("#resultDocente").text("");}
+
+                    if($("#resultDocente").text() == "")
+                    	$("#resultDocente").text("No existe");
              },
              error : function(message) {
                      $("#resultDocente").text("No se han encontrado docentes que coincidan con los parámetros de búsqueda");
