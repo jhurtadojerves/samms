@@ -155,7 +155,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = ['https://avancemacas.herokuapp.com/']
 
-DEBUG = True
+DEBUG = False
 
 try:
     from .local_settings import *
