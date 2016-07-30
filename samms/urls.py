@@ -23,7 +23,7 @@ from django.contrib.auth.views import login
 
 #from asignatura.models import Asignatura
 
-from docente.views import coordinador_reporte_materias_todo_xls, coordinador_asignaturas_xls
+#from docente.views import coordinador_reporte_materias_todo_xls, coordinador_asignaturas_xls
 
 #Comentar URLs de abajo para la migración inicial
 urlpatterns = [
@@ -61,7 +61,7 @@ urlpatterns = [
 	url(r'^reportes/docente/([^/]+)/$', 'docente.views.coordinador_reporte_materias', name = 'coordinador_reporte_materias'),
 	url(r'^reportes/docente/([^/]+)/pdf/$', 'docente.views.coordinador_reporte_materias_todo', name = 'coordinador_reporte_materias_todo'),
 
-	url(r'^reportes/xls/descargar/$', coordinador_reporte_materias_todo_xls.as_view(), name = 'coordinador_reporte_materias_todo_xls'),
+	url(r'^reportes/xls/descargar/$', 'coordinador_reporte_materias_todo_xls.as_view()', name = 'coordinador_reporte_materias_todo_xls'),
 	url(r'^reportes/xls/$', 'docente.views.coordinador_buscar_docentes_excel', name = 'coordinador_buscar_docentes_excel'),
 	url(r'^reportes/xls/docente/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls', name = 'coordinador_asignaturas_xls'),
 	url(r'^reportes/xls/docente/([^/]+)/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls_asig', name = 'coordinador_asignaturas_xls_asig'),
