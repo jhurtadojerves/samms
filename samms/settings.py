@@ -23,10 +23,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '&w#=xg)&w-cj8r8!_y&c1tl4bx1tymer(w$$sxjm*7kpj$nu%!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -83,7 +79,7 @@ WSGI_APPLICATION = 'samms.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -98,6 +94,7 @@ DATABASES = {
         },
     }
 }
+'''
 
 
 # Password validation
@@ -150,3 +147,17 @@ WKHTMLTOPDF_CMD = '/usr/bin/wkhtmltopdf'
 WKHTMLTOPDF_CMD_OPTIONS = {
     'quiet': True,
 }
+
+import dj_database_url
+DATABASES['default'] = dj_database_url.config()
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+ALLOWED_HOSTS = ['*']
+
+DEBUG = False
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
