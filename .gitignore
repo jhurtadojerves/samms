@@ -79,3 +79,5 @@ target/
 
 
 local_settings.py
+
+.bundle
