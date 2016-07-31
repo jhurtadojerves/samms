@@ -143,7 +143,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 #WKHTMLTOPDF_CMD = '/path/to/my/wkhtmltopdf'
-WKHTMLTOPDF_CMD = '/usr/bin/wkhtmltopdf'
+#WKHTMLTOPDF_CMD = '/usr/bin/wkhtmltopdf'
 WKHTMLTOPDF_CMD_OPTIONS = {
     'quiet': True,
 }
