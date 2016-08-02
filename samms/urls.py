@@ -66,5 +66,11 @@ urlpatterns = [
 	url(r'^reportes/xls/docente/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls', name = 'coordinador_asignaturas_xls'),
 	url(r'^reportes/xls/docente/([^/]+)/([^/]+)/$', 'docente.views.coordinador_asignaturas_xls_asig', name = 'coordinador_asignaturas_xls_asig'),
 
+	#Gestión de Horarios
+	url(r'^horarios/$', 'docente.views.horario_docente_buscar', name = 'horario_docente_buscar'),
+	url(r'^horarios/docente/([^/]+)/asignaturas/$', 'docente.views.horario_docente_lista', name = 'horario_docente_lista'),
+	url(r'^horarios/docente/([^/]+)/asignaturas/([^/]+)/$', 'docente.views.horario_docente_asignatura_horario', name = 'horario_docente_asignatura_horario'),
+	url(r'^horarios/docente/([^/]+)/asignaturas/([^/]+)/nuevo/$', 'docente.views.horario_docente_asignatura_horario_nuevo', name = 'horario_docente_asignatura_horario_nuevo'),
+
 
 ]

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Horarios Registrados - {{ asignatura.descripcion }} - {{ docente.get_full_name }}
+{% endblock %}
+{% block lugar_previo %} <a href="{% url 'horario_docente_lista' docente.id%}">Asignaturas</a>{% endblock %}
+{% block lugar %}Horarios Registrados - {{ asignatura.descripcion }} - {{ docente.get_full_name }}{% endblock %}
+
+{% block accion %}Ver{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        {% if request.GET.mensaje == "correcto" %}
+        <div class="alert alert-success .alert-dismissible">
+              <strong>¡Listo!</strong> El tema fue ingresado correctamente
+        </div>
+        {% endif %}
+
+        <header class="panel-heading">
+              Horarios Registrados - {{ asignatura.descripcion }} - {{ docente.get_full_name }}
+        </header>
+
+        <div class="table-responsive">
+            <table class="table table-striped" >
+                <thead>
+                    <tr>
+                        <th>Día</th>
+                        <th>Hora de Inicio</th>
+                        <th>Duración</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for horario in horarios %}
+                    <tr>
+                        <td>{{ horario.get_dia_display }}</td>
+                        <td>{{ horario.get_inicio_display}}</td>
+                        <td>{{ horario.get_fin_display }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <p>
+            <a class="btn btn-primary" href="{% url 'horario_docente_asignatura_horario_nuevo' docente.id asignatura.codigo %}" title="Nuevo"><span class="icon_plus_alt2"></span> Nuevo</a>
+        </p>
+        </div>
+
+    </section>
+{% endblock %}

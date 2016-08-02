@@ -20,11 +20,16 @@ from horario.models import Horario
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 
-from planificacion.forms import DictadoFormDocente, UnidadForm
+from planificacion.forms import DictadoFormDocente, UnidadForm, HorarioForm
 from estudiante.forms import FechasReporte
 from wkhtmltopdf.views import PDFTemplateResponse
 from django import forms
 import datetime
+
+
+import xlsxwriter
+from xlsxwriter.utility import xl_range_abs
+from django.views.generic import View
 
 import webservices, metodos
 
@@ -321,15 +326,6 @@ def coordinador_reporte_materias_todo(request, id):
 	return PDFTemplateResponse(request, 'reportes/semestre_coordinador.html',
 							   {'asignaturas': asignaturasClean, 'temas': temas, 'docente': docente})
 
-
-# return render(request, 'reportes/semestre_coordinador.html', , context_instance=RequestContext(request))
-
-
-import xlsxwriter
-from xlsxwriter.utility import xl_range_abs
-from django.views.generic import View
-
-
 class coordinador_reporte_materias_todo_xls(View):
 	filename = 'excelfile.xlsx'
 
@@ -365,7 +361,7 @@ class coordinador_reporte_materias_todo_xls(View):
 
 	# return HttpResponse(open(self.filename).read(), content_type='application/ms-excel')
 
-
+@staff_member_required()
 def coordinador_asignaturas_xls(request, id):
 	docente = get_object_or_404(Docente, user_ptr=id)
 	periodo = get_object_or_404(Periodo, estado=True)
@@ -380,7 +376,7 @@ def coordinador_asignaturas_xls(request, id):
 	return render(request, 'reportes/ver_asignaturas_xls.html', {'asignaturas': asignaturasClean},
 				  context_instance=RequestContext(request))
 
-
+@staff_member_required()
 def coordinador_asignaturas_xls_asig(request, id, id2):
 	docente = get_object_or_404(Docente, user_ptr=id)
 	periodo = get_object_or_404(Periodo, estado=True)
@@ -480,3 +476,63 @@ def coordinador_asignaturas_xls_asig(request, id, id2):
 	#response['Content-Disposition'] = 'attachment; filename=Excel.xls'
 	response['Content-Disposition'] = nombre
 	return response
+
+@staff_member_required()
+def horario_docente_buscar(request):
+	return render(request, 'coordinador/buscar_horario.html', {}, context_instance=RequestContext(request))
+
+@staff_member_required()
+def horario_docente_lista(request, id):
+	docente = get_object_or_404(Docente, user_ptr=id)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignaturasDocente = DocenteAsignaturaPeriodo.objects.filter(docente = docente, periodo = periodo).values('asignatura_id')
+	asignaturas = Asignatura.objects.filter(id__in = asignaturasDocente)
+	return render(request, 'coordinador/ver_asignaturas.html', {'asignaturas': asignaturas, 'docente':docente}, context_instance=RequestContext(request))
+
+@staff_member_required()
+def horario_docente_asignatura_horario(request, id_docente, id_asignatura):
+	docente = get_object_or_404(Docente, user_ptr=id_docente)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignatura = get_object_or_404(Asignatura, codigo = id_asignatura)
+	asignaturadocente = get_object_or_404(DocenteAsignaturaPeriodo, docente=docente,periodo=periodo,asignatura=asignatura)
+	horarios = Horario.objects.filter(asignatura=asignaturadocente).order_by('dia')
+
+	return render(request, 'coordinador/ver_horarios.html', {'horarios': horarios, 'asignatura':asignatura, 'docente':docente},
+				  context_instance=RequestContext(request))
+
+@staff_member_required()
+def horario_docente_asignatura_horario_nuevo(request, id_docente, id_asignatura):
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignatura = get_object_or_404(Asignatura, codigo=id_asignatura)
+	docente = get_object_or_404(Docente, user_ptr=id_docente)
+	docasigper = get_object_or_404(DocenteAsignaturaPeriodo, docente=docente, periodo=periodo, asignatura=asignatura)
+
+	if request.method == 'POST':
+		form = HorarioForm(request.POST)
+		if form.is_valid():
+			horario = form.save(commit=False)
+			horario.asignatura = docasigper
+			asignaturas = DocenteAsignaturaPeriodo.objects.filter(docente=docente, periodo=periodo)
+			horarios = Horario.objects.filter(asignatura__in=asignaturas)
+
+			for h in horarios:
+				if h.inicio == horario.inicio:
+					return render(request, 'coordinador/crear_horario.html',
+								  {'form': form, 'asignatura': asignatura, 'docente': docente, 'error': True},
+								  context_instance=RequestContext(request))
+
+			try:
+				horario.save()
+				return HttpResponseRedirect(reverse('horario_docente_asignatura_horario', args=(id_docente,id_asignatura))+"?mensaje=correcto")
+			except:
+				return render(request, 'coordinador/crear_horario.html',
+							  {'form': form, 'asignatura': asignatura, 'docente': docente, 'integridad': True},
+							  context_instance=RequestContext(request))
+
+	else:
+		form = HorarioForm()
+	return render(request, 'coordinador/crear_horario.html', {'form': form, 'asignatura': asignatura, 'docente':docente},
+				  context_instance=RequestContext(request))
+
+
+

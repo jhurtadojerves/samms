@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from models import Tema, Unidad
+from horario.models import Horario
 from django.core.exceptions import ValidationError
 forms.DateInput.input_type="date"
+forms.TimeInput.input_type="time"
 forms.DateTimeInput.input_type="datetime-local"
 
 
@@ -35,7 +37,17 @@ class DictadoFormDocente(forms.ModelForm):
 		self.fields['horario'].queryset = query
 		self.fields['horario'].empty_label = None
 
+class HorarioForm(forms.ModelForm):
+	class Meta:
+		model = Horario
+		exclude = ['asignatura']
 
+	def __init__(self, *args, **kwargs):
+		super(HorarioForm, self).__init__(*args, **kwargs)
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({
+				'class': 'form-control'
+			})
 
 class UnidadForm(forms.ModelForm):
 	class Meta:
@@ -48,5 +60,3 @@ class UnidadForm(forms.ModelForm):
 			self.fields[field].widget.attrs.update({
 				'class': 'form-control'
 			})
-
-

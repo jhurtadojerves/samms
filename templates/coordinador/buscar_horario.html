@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Reportes - Buscar Docente
+{% endblock %}
+{% block lugar_previo %} {% endblock %}
+{% block lugar %}Reportes{% endblock %}
+
+{% block accion %}Buscar{% endblock %}
+
+{% block contenido  %}
+    <section class="panel">
+        <header class="panel-heading">
+              Docentes
+        </header>
+
+        <div class="list-group" >
+            <br><br>
+            <form id="search" method="get" action="#">
+                <label for="">Buscar Docente:</label><br><input type="text" name="query" placeholder="Buscar Docente. Cédula, Nombre, Apellido" id="busqueda" class="form-control"/>
+            </form>
+
+            <div id="resultDocente">
+
+
+            </div>
+        </div>
+        <script>
+        $('#busqueda').keyup(function(e){
+            $("#resultDocente").text("")
+            consulta = $("#busqueda").val();
+             $.ajax({
+             data: {'nombre': consulta},
+             url: '/reportes/buscar/',
+             type: 'get',
+             success : function(data) {
+
+                    for (i=0;i<data.length;i++){
+                        $("#resultDocente").append("<a class='list-group-item' target=__blank href=docente/"+data[i].id+"/asignaturas >"+data[i].first_name + " " + data[i].last_name+"</a>");
+                    }
+                    if(consulta == ""){$("#resultDocente").text("");}
+                    if(data.length<1){
+                        $("#resultDocente").text("No se han encontrado docentes que coincidan con los parámetros de búsqueda")
+                    }
+             },
+             error : function(message) {
+                     $("#resultDocente").text("No se han encontrado docentes que coincidan con los parámetros de búsqueda");
+                  }
+             });
+        });
+    </script>
+    </section>
+{% endblock %}

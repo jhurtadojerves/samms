@@ -10,10 +10,7 @@
 {% block contenido  %}
     <section class="panel">
         {% if request.GET.mensaje == "correcto" %}
-        <div class="alert alert-success fade in">
-              <button data-dismiss="alert" class="close close-sm" type="button">
-                  <i class="icon-remove"></i>
-              </button>
+        <div class="alert alert-success fade in .alert-dismissible">
               <strong>¡Listo!</strong> El tema fue ingresado correctamente
         </div>
         {% endif %}

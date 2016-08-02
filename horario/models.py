@@ -12,27 +12,35 @@ from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 # Create your models here.
 
 class Horario(models.Model):
-    asignatura = models.ForeignKey(DocenteAsignaturaPeriodo)
-    dias = (
-        ('0', 'Lunes'),
-        ('1', 'Martes'),
-        ('2', 'Miercoles'),
-        ('3', 'Jueves'),
-        ('4', 'Viernes')
-    )
-    dia = models.CharField(max_length=1, choices=dias, default='0')
-    inicio = models.TimeField()
-    fin = models.TimeField()
+	asignatura = models.ForeignKey(DocenteAsignaturaPeriodo, blank=True)
+	dias = (
+		('0', 'Lunes'),
+		('1', 'Martes'),
+		('2', 'Miercoles'),
+		('3', 'Jueves'),
+		('4', 'Viernes')
+	)
+	dia = models.CharField(max_length=1, choices=dias, default='0')
 
-    def __unicode__(self):
-        a = {0: 'Lunes', 1:'Martes', 2:'Miércoles', 3:'Jueves', 4: 'Viernes'}
-        return self.asignatura.asignatura.descripcion + ' - ' + a[int(self.dia)]
+	horas_inicio = (
+		('1', '07:30'),
+		('2', '09:30'),
+		('3', '11:30'),
+		('4', '14:30'),
+	)
 
-    class Meta:
-        unique_together = ('asignatura', 'dia',)
+	inicio = models.CharField(max_length=1, choices=horas_inicio, default='1')
 
-    def clean(self):
-        if not self.fin>self.inicio:
-            raise forms.ValidationError("La hora de fin debe ser posterior a la de inicio")
-        else:
-            return self
+	duracion = (
+		('1', '1 Hora'),
+		('2', '2 Horas')
+	)
+
+	fin = models.CharField(max_length=1, choices=duracion, default='2')
+
+	def __unicode__(self):
+		a = {0: 'Lunes', 1:'Martes', 2:'Miércoles', 3:'Jueves', 4: 'Viernes'}
+		return self.asignatura.asignatura.descripcion + ' - ' + a[int(self.dia)]
+
+	class Meta:
+		unique_together = ('asignatura', 'dia',)

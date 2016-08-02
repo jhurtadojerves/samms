@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Gestión de Horarios - Asignaturas
+{% endblock %}
+{% block lugar_previo %}<a href="{% url 'horario_docente_buscar' %}">Buscar Docente</a>{% endblock %}
+{% block lugar %}Gestión de Horarios - Asignaturas - {{ docente.get_full_name }}{% endblock %}
+
+{% block accion %}Gestión de Horarios - Asignaturas - {{ docente.get_full_name }}{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+        <header class="panel-heading">
+              Asignaturas
+        </header>
+
+       <div class="list-group">
+            {% for asignatura in asignaturas %}
+                <a class="list-group-item" href="{{ asignatura.codigo }}">{{ asignatura.descripcion }}</a>
+            {% endfor %}
+        </div>
+
+    </section>
+{% endblock %}
