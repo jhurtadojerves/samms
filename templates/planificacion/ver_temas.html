@@ -36,7 +36,7 @@
                         <td>{{ tema.nombre }}</td>
                         <td>{{ tema.fecha }}</td>
                         <td>{{ tema.horario.get_dia_display }}</td>
-                        <td>{{ tema.horario.inicio }} - {{ tema.horario.fin }}</td>
+                        <td>{{ tema.horario.get_inicio_display }}</td>
                         <td>{{ tema.tema_string }}</td>
                     </tr>
                 {% endfor %}

@@ -32,6 +32,17 @@ from docenteAsignaturaPeriodo.models import DocenteAsignaturaPeriodo
 from horario.models import Horario
 
 
+from reportlab.platypus import Paragraph
+from reportlab.platypus import Image
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import Table
+
+import time
+
 # Create your views here.
 
 
@@ -162,11 +173,28 @@ def ver_materia_reporte(request):
 	return render(request, 'estudiante/ver_asignaturas.html', {'asignaturas': lista}, context_instance=RequestContext(request))
 
 def ver_reporte_input_fechas(request, id):
+	estiloHoja = getSampleStyleSheet()
+	cabecera = estiloHoja['Heading4']
+	cabecera.pageBreakBefore = 0
+	cabecera.keepWithNext = 0
+	estilo = estiloHoja['BodyText']
+	story = []
+
+	fichero_imagen = "elviajedelnavegante_png.png"
+	imagen_logo = Image("logo.png", width=400, height=100)
+	story.append(imagen_logo)
+	story.append(Spacer(0, 10))
+
+
 	estudiante = get_object_or_404(Estudiante, user_ptr = request.user)
 	asignatura = get_object_or_404(Asignatura, codigo = id)
 	periodo = get_object_or_404(Periodo, estado = True)
 	asigperiodo = DocenteAsignaturaPeriodo.objects.filter(asignatura = asignatura, periodo = periodo)
 	asigestudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(docenteasignatura__in=asigperiodo, estudiante = estudiante)
+
+
+
+
 	aux = list()
 	for i in asigestudiante:
 		aux.append(i.docenteasignatura)
@@ -181,7 +209,48 @@ def ver_reporte_input_fechas(request, id):
 			fin = form['fin'].value()
 			temas = Tema.objects.filter(horario__in=horario, fecha__range = (inicio, fin))
 
-			return PDFTemplateResponse(request, "reportes/estudiante.html", {'temas': temas, 'asignatura': asignatura})
+
+			datos = []
+
+			#horario = Horario.objects.filter(asignatura=i)
+			#temas = Tema.objects.filter(horario__in=horario, fecha__range=(periodo.fechainicio, periodo.fechafin))
+			if temas.exists():
+				parrafo = Paragraph(asignatura.descripcion, cabecera)
+				fila_inicial = ['Tema', 'Fecha', 'Hora', 'Estado', 'Revisado por']
+				story.append(parrafo)
+				datos.append(fila_inicial)
+
+				for t in temas:
+					try:
+						fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(),
+								t.revisado_por.get_full_name()]
+					except:
+						fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), '-']
+					datos.append(fila)
+				tabla = Table(datos)
+				tabla.normalizeData(datos)
+				tabla.setStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black)])
+				tabla.setStyle([('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+
+				story.append(tabla)
+				story.append(Spacer(0, 20))
+			ahora = time.strftime("%x %X")
+			parrafo = Paragraph("Generado por: "+estudiante.get_full_name(), cabecera)
+			story.append(parrafo)
+			story.append(Spacer(0, 10))
+			parrafo = Paragraph(ahora, cabecera)
+			story.append(parrafo)
+
+			parrafo = Paragraph("Generado por: " + estudiante.get_full_name() + " " + ahora, cabecera)
+
+			doc = SimpleDocTemplate(estudiante.cedula + "-"+asignatura.codigo+".pdf", pagesize=A4, showBoundary=0)
+			doc.build(story)
+			output = open(estudiante.cedula + "-"+asignatura.codigo+".pdf")
+			response = HttpResponse(output, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename=' + estudiante.cedula + "-"+asignatura.codigo+".pdf"
+			return response
+
+			#return PDFTemplateResponse(request, "reportes/estudiante.html", {'temas': temas, 'asignatura': asignatura})
 	else:
 		form = FechasReporte()
 	return render(request, 'estudiante/form_reporte.html', {'form': form}, context_instance=RequestContext(request))

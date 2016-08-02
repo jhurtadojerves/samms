@@ -40,9 +40,127 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import Table
 
-import webservices, metodos
+import webservices, metodos, time
+
+@staff_member_required()
+def reporte_temas(request, id):
+	estiloHoja = getSampleStyleSheet()
+	cabecera = estiloHoja['Heading4']
+	cabecera.pageBreakBefore = 0
+	cabecera.keepWithNext = 0
+
+	#cabecera.backColor = colors.blue
+
+	estilo =  estiloHoja['BodyText']
+
+	docente = get_object_or_404(Docente, user_ptr=id)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente)
+	#asignaturas = Asignatura.objects.filter(id__in = asignaturasAUX)
+	story = []
+
+	fichero_imagen = "elviajedelnavegante_png.png"
+	imagen_logo = Image("logo.png", width=400, height=100)
+	story.append(imagen_logo)
+	story.append(Spacer(0, 10))
+	parrafo = Paragraph("Docente: "+docente.get_full_name() + " - "+ docente.cedula,estilo)
+	story.append(parrafo)
+	story.append(Spacer(0, 10))
 
 
+	for i in asignaturas:
+		datos = []
+
+		horario = Horario.objects.filter(asignatura=i)
+		temas = Tema.objects.filter(horario__in=horario, fecha__range=(periodo.fechainicio, periodo.fechafin))
+		if temas.exists():
+			parrafo = Paragraph(i.asignatura.descripcion, cabecera)
+			fila_inicial = ['Tema', 'Fecha', 'Hora', 'Estado', 'Revisado por']
+			story.append(parrafo)
+			datos.append(fila_inicial)
+
+			for t in temas:
+				try:
+					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), t.revisado_por.get_full_name()]
+				except:
+					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), '-']
+				datos.append(fila)
+			tabla = Table(datos)
+			tabla.normalizeData(datos)
+			tabla.setStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black)])
+			tabla.setStyle([('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+
+
+			story.append(tabla)
+			story.append(Spacer(0, 20))
+
+	doc = SimpleDocTemplate(docente.cedula + ".pdf", pagesize=A4, showBoundary=0)
+	doc.build(story)
+	output = open(docente.cedula + ".pdf")
+	response = HttpResponse(output, content_type='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename='+docente.cedula + ".pdf"
+	return response
+
+def reporte_asignatura(request, id):
+	estiloHoja = getSampleStyleSheet()
+	cabecera = estiloHoja['Heading4']
+	cabecera.pageBreakBefore = 0
+	cabecera.keepWithNext = 0
+
+	#cabecera.backColor = colors.blue
+
+	estilo =  estiloHoja['BodyText']
+
+	docente = get_object_or_404(Docente, user_ptr=id)
+	periodo = get_object_or_404(Periodo, estado=True)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente)
+	#asignaturas = Asignatura.objects.filter(id__in = asignaturasAUX)
+	story = []
+
+	fichero_imagen = "elviajedelnavegante_png.png"
+	imagen_logo = Image("logo.png", width=400, height=100)
+	story.append(imagen_logo)
+	story.append(Spacer(0, 10))
+	parrafo = Paragraph("Docente: "+docente.get_full_name() + " - "+ docente.cedula,estilo)
+	story.append(parrafo)
+	story.append(Spacer(0, 10))
+
+
+	for i in asignaturas:
+		datos = []
+
+		horario = Horario.objects.filter(asignatura=i)
+		temas = Tema.objects.filter(horario__in=horario, fecha__range=(periodo.fechainicio, periodo.fechafin))
+		if temas.exists():
+			parrafo = Paragraph(i.asignatura.descripcion, cabecera)
+			fila_inicial = ['Tema', 'Fecha', 'Hora', 'Estado', 'Revisado por']
+			story.append(parrafo)
+			datos.append(fila_inicial)
+
+			for t in temas:
+				try:
+					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), t.revisado_por.get_full_name()]
+				except:
+					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), '-']
+				datos.append(fila)
+			tabla = Table(datos)
+			tabla.normalizeData(datos)
+			tabla.setStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black)])
+			tabla.setStyle([('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+
+
+			story.append(tabla)
+			story.append(Spacer(0, 20))
+
+	doc = SimpleDocTemplate(docente.cedula + ".pdf", pagesize=A4, showBoundary=0)
+	doc.build(story)
+	output = open(docente.cedula + ".pdf")
+	response = HttpResponse(output, content_type='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename='+docente.cedula + ".pdf"
+	return response
+
+
+@staff_member_required()
 def reporte(request):
 
 	estiloHoja = getSampleStyleSheet()
@@ -335,16 +453,68 @@ def ver_reporte_input_fechas(request, id):
 	docente = get_object_or_404(Docente, user_ptr=request.user)
 	asignatura = get_object_or_404(Asignatura, codigo=id)
 	periodo = get_object_or_404(Periodo, estado=True)
-	asigperiodo = DocenteAsignaturaPeriodo.objects.filter(asignatura=asignatura, periodo=periodo, docente=docente)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(asignatura=asignatura, periodo=periodo, docente=docente)
+
+	estiloHoja = getSampleStyleSheet()
+	cabecera = estiloHoja['Heading4']
+	cabecera.pageBreakBefore = 0
+	cabecera.keepWithNext = 0
+	story = []
+	estilo = estiloHoja['BodyText']
+	fichero_imagen = "elviajedelnavegante_png.png"
+	imagen_logo = Image("logo.png", width=400, height=100)
+	story.append(imagen_logo)
+	story.append(Spacer(0, 10))
+	parrafo = Paragraph("Docente: " + docente.get_full_name() + " - " + docente.cedula, estilo)
+	story.append(parrafo)
+	story.append(Spacer(0, 10))
+
+
+
+
+	# cabecera.backColor = colors.blue
+
+	estilo = estiloHoja['BodyText']
 	# asigestudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(docenteasignatura__in=asigperiodo, estudiante = estudiante)
-	horario = Horario.objects.filter(asignatura__in=asigperiodo)
+	#horario = Horario.objects.filter(asignatura__in=asigperiodo)
 	if request.method == 'POST':
 		form = FechasReporte(request.POST)
 		if form.is_valid():
 			inicio = form['inicio'].value()
 			fin = form['fin'].value()
-			temas = Tema.objects.filter(horario__in=horario, fecha__range=(inicio, fin))
-			return PDFTemplateResponse(request, "reportes/docente.html", {'temas': temas, 'asignatura': asignatura})
+			for i in asignaturas:
+				datos = []
+
+				horario = Horario.objects.filter(asignatura=i)
+				temas = Tema.objects.filter(horario__in=horario, fecha__range=(inicio, fin))
+				if temas.exists():
+					parrafo = Paragraph(i.asignatura.descripcion, cabecera)
+					fila_inicial = ['Tema', 'Fecha', 'Hora', 'Estado']
+					story.append(parrafo)
+					datos.append(fila_inicial)
+
+					for t in temas:
+						fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display()]
+						datos.append(fila)
+					tabla = Table(datos)
+					tabla.normalizeData(datos)
+					tabla.setStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black)])
+					tabla.setStyle([('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
+
+					story.append(tabla)
+					story.append(Spacer(0, 20))
+			ahora = time.strftime("%x %X")
+			parrafo = Paragraph("Generado por: " + docente.get_full_name(), cabecera)
+			story.append(parrafo)
+			story.append(Spacer(0, 10))
+			parrafo = Paragraph(ahora, cabecera)
+			story.append(parrafo)
+			doc = SimpleDocTemplate(docente.cedula + "-"+asignatura.codigo+".pdf", pagesize=A4, showBoundary=0)
+			doc.build(story)
+			output = open(docente.cedula + "-"+asignatura.codigo+".pdf")
+			response = HttpResponse(output, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename=' +docente.cedula + "-"+asignatura.codigo+".pdf"
+			return response
 	else:
 		form = FechasReporte()
 	return render(request, 'estudiante/form_reporte.html', {'form': form}, context_instance=RequestContext(request))
