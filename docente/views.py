@@ -31,7 +31,80 @@ import xlsxwriter
 from xlsxwriter.utility import xl_range_abs
 from django.views.generic import View
 
+from reportlab.platypus import Paragraph
+from reportlab.platypus import Image
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import Table
+
 import webservices, metodos
+
+
+def reporte(request):
+
+	estiloHoja = getSampleStyleSheet()
+	story = []
+	cabecera = estiloHoja['Heading4']
+	cabecera.pageBreakBefore = 0
+	cabecera.keepWithNext = 0
+	cabecera.backColor = colors.blueviolet
+	parrafo = Paragraph("DOCENTES ", cabecera)
+	story.append(parrafo)
+
+	docentes = Docente.objects.all()
+	fila_cabecera = ['Cédula', 'Nombre', 'Apellido']
+	datos = []
+	datos.append(fila_cabecera)
+
+	for docente in docentes:
+		datos.append([docente.cedula, docente.first_name, docente.last_name])
+
+	tabla = Table(datos)
+
+
+	estilo = estiloHoja['BodyText']
+	#parrafo2 = Paragraph(tabla, estilo)
+	story.append(tabla)
+	story.append(Spacer(0, 20))
+	doc = SimpleDocTemplate("ejemplo1.pdf", pagesize=A4, showBoundary=1)
+	doc.build(story)
+	output = open("ejemplo1.pdf")
+	response = HttpResponse(output, content_type='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename=docentes.pdf'
+	return response
+
+	'''
+	estiloHoja = getSampleStyleSheet()
+	story = []
+	cabecera = estiloHoja['Heading4']
+	cabecera.pageBreakBefore = 0
+	cabecera.keepWithNext = 0
+	cabecera.backColor = colors.blueviolet
+	parrafo = Paragraph("CABECERA DEL DOCUMENTO ", cabecera)
+	story.append(parrafo)
+	cadena = " El Viaje del Navegante " * 600
+	estilo = estiloHoja['BodyText']
+	parrafo2 = Paragraph(cadena, estilo)
+	story.append(parrafo2)
+	story.append(Spacer(0, 20))
+	doc = SimpleDocTemplate("ejemplo1.pdf", pagesize=A4, showBoundary=1)
+	doc.build(story)
+	output = open("ejemplo1.pdf")
+	response = HttpResponse(output, content_type='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename=all_competencies.pdf'
+	return response
+	'''
+
+	#response = HttpResponse(doc.build(story), content_type="application/pdf")
+	# response['Content-Disposition'] = 'attachment; filename=Excel.xls'
+	#response['Content-Disposition'] = "descarga.pdf"
+	#return response
+
+
+
 
 
 # Create your views here.

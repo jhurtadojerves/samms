@@ -3,6 +3,8 @@ Django==1.9.6
 django-wkhtmltopdf==3.0.0
 gunicorn==19.6.0
 MySQL-python==1.2.5
+Pillow==3.3.0
+reportlab==3.3.0
 suds==0.4
 XlsxWriter==0.9.3
 psycopg2==2.5.4

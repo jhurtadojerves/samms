@@ -76,6 +76,7 @@ target/
 
 *.xlsx
 *.xls
+*.pdf
 
 
 local_settings.py

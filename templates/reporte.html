@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <table>
+
+    <tr>
+        <td>Cédula</td>
+        <td>Nombres</td>
+    </tr>
+
+    {% for docente in docentes %}
+            <tr>
+                <td>{{ docente.cedula }}</td>
+                <td>{{ docente.get_full_name }}</td>
+            </tr>
+    {% endfor %}
+
+    </table>
+
+</body>
+</html>
