@@ -37,9 +37,9 @@
                 {% for tema in temas %}
                     <tr>
                         <td>{{ tema.unidad.asignatura.asignatura.descripcion }}</td>
-                        <td>{{ tema.descripcion }}</td>
+                        <td>{{ tema.nombre }}</td>
                         <td>{{ tema.fecha }}</td>
-                        <td>{{ tema.horario.inicio }} - {{ tema.horario.fin }}</td>
+                        <td>{{ tema.horario.get_inicio_display }}</td>
                         <td><a href="revisar/{{ tema.id }}">{{ tema.tema_string }}</a></td>
                     </tr>
                 {% endfor %}
