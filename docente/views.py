@@ -759,7 +759,7 @@ def horario_docente_asignatura_horario_nuevo(request, id_docente, id_asignatura)
 			horarios = Horario.objects.filter(asignatura__in=asignaturas)
 
 			for h in horarios:
-				if h.inicio == horario.inicio:
+				if (h.inicio == horario.inicio) and (h.dia == horario.dia):
 					return render(request, 'coordinador/crear_horario.html',
 								  {'form': form, 'asignatura': asignatura, 'docente': docente, 'error': True},
 								  context_instance=RequestContext(request))
