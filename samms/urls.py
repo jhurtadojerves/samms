@@ -71,6 +71,7 @@ urlpatterns = [
 	url(r'^horarios/docente/([^/]+)/asignaturas/$', 'docente.views.horario_docente_lista', name = 'horario_docente_lista'),
 	url(r'^horarios/docente/([^/]+)/asignaturas/([^/]+)/$', 'docente.views.horario_docente_asignatura_horario', name = 'horario_docente_asignatura_horario'),
 	url(r'^horarios/docente/([^/]+)/asignaturas/([^/]+)/nuevo/$', 'docente.views.horario_docente_asignatura_horario_nuevo', name = 'horario_docente_asignatura_horario_nuevo'),
+	url(r'^horarios/docente/([^/]+)/asignaturas/([^/]+)/editar/([^/]+)/$', 'docente.views.horario_editar', name = 'horario_editar'),
 
 
 	url(r'^descargar/pdf/$', 'docente.views.reporte', name = 'reporte'),

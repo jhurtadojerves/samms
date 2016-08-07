@@ -11,9 +11,22 @@
     <section class="panel">
         {% if request.GET.mensaje == "correcto" %}
         <div class="alert alert-success .alert-dismissible">
-              <strong>¡Listo!</strong> El tema fue ingresado correctamente
+              <strong>¡Listo!</strong> El horario fue ingresado correctamente
         </div>
         {% endif %}
+
+        {% if request.GET.editar == "correcto" %}
+        <div class="alert alert-success .alert-dismissible">
+              <strong>¡Listo!</strong> El horario fue editado correctamente
+        </div>
+        {% endif %}
+
+        {% if request.GET.existe == "falso"%}
+        <div class="alert alert-danger" role="alert">
+            <b>¡Lo Sentimos!</b> El elemento que está buscando no existe
+        </div>
+        {% endif %}
+
 
         <header class="panel-heading">
               Horarios Registrados - {{ asignatura.descripcion }} - {{ docente.get_full_name }}
@@ -26,6 +39,7 @@
                         <th>Día</th>
                         <th>Hora de Inicio</th>
                         <th>Duración</th>
+                        <th>Editar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +48,7 @@
                         <td>{{ horario.get_dia_display }}</td>
                         <td>{{ horario.get_inicio_display}}</td>
                         <td>{{ horario.get_fin_display }}</td>
+                        <td><a href="{% url 'horario_editar' docente.id asignatura.codigo horario.id %}">Editar</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>

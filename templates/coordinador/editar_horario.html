@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Editar Horario - {{ docente.get_full_name }} - {{ asignatura.descripcion }}
+{% endblock %}
+{% block lugar_previo %}
+    <a href="{% url 'horario_docente_asignatura_horario' docente.id asignatura.codigo %}">Horarios</a>
+{% endblock %}
+{% block lugar %} Editar Horario - {{ docente.get_full_name }} - {{ asignatura.descripcion }}{% endblock %}
+{% block accion %} Editar Horario - {{ docente.get_full_name }} - {{ asignatura.descripcion }}{% endblock %}
+{% block contenido  %}
+    <section class="panel">
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert"><b>¡Lo Sentimos!</b> El docente {{ docente.get_full_name }} ya tiene un horario registrado para esa hora</div>
+        {% endif %}
+        {% if integridad %}
+        <div class="alert alert-danger" role="alert"><b>¡Lo Sentimos!</b> La signatura {{ asignatura.descripcon }} ya tiene un horario registrado para el día seleccionado</div>
+        {% endif %}
+
+
+        <header class="panel-heading">
+               Editar Horario - {{ docente.get_full_name }} - {{ asignatura.descripcion }}
+        </header>
+        <form action="" method="POST">
+        {% csrf_token %}
+            {{ form.as_p }}
+        <p><button type="submit" class="btn btn-success btn-lg" title="Aceptar">Guardar</button></p>
+    </form>
+    </section>
+{% endblock %}

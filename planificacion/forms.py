@@ -60,3 +60,15 @@ class UnidadForm(forms.ModelForm):
 			self.fields[field].widget.attrs.update({
 				'class': 'form-control'
 			})
+
+class HorarioEditForm(forms.ModelForm):
+	class Meta:
+		model = Horario
+		fields = ['dia', 'inicio', 'fin',]
+
+	def __init__(self, *args, **kwargs):
+		super(HorarioEditForm, self).__init__(*args, **kwargs)
+		for field in self.fields:
+			self.fields[field].widget.attrs.update({
+				'class': 'form-control'
+			})

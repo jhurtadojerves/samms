@@ -20,7 +20,7 @@ from horario.models import Horario
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 
-from planificacion.forms import DictadoFormDocente, UnidadForm, HorarioForm
+from planificacion.forms import DictadoFormDocente, UnidadForm, HorarioForm, HorarioEditForm
 from estudiante.forms import FechasReporte
 from wkhtmltopdf.views import PDFTemplateResponse
 from django import forms
@@ -29,6 +29,8 @@ import datetime
 
 import xlsxwriter
 from xlsxwriter.utility import xl_range_abs
+
+
 from django.views.generic import View
 
 from reportlab.platypus import Paragraph
@@ -48,17 +50,11 @@ def reporte_temas(request, id):
 	cabecera = estiloHoja['Heading4']
 	cabecera.pageBreakBefore = 0
 	cabecera.keepWithNext = 0
-
-	#cabecera.backColor = colors.blue
-
 	estilo =  estiloHoja['BodyText']
-
 	docente = get_object_or_404(Docente, user_ptr=id)
 	periodo = get_object_or_404(Periodo, estado=True)
 	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente)
-	#asignaturas = Asignatura.objects.filter(id__in = asignaturasAUX)
 	story = []
-
 	fichero_imagen = "elviajedelnavegante_png.png"
 	imagen_logo = Image("logo.png", width=400, height=100)
 	story.append(imagen_logo)
@@ -66,11 +62,8 @@ def reporte_temas(request, id):
 	parrafo = Paragraph("Docente: "+docente.get_full_name() + " - "+ docente.cedula,estilo)
 	story.append(parrafo)
 	story.append(Spacer(0, 10))
-
-
 	for i in asignaturas:
 		datos = []
-
 		horario = Horario.objects.filter(asignatura=i)
 		temas = Tema.objects.filter(horario__in=horario, fecha__range=(periodo.fechainicio, periodo.fechafin))
 		if temas.exists():
@@ -78,10 +71,10 @@ def reporte_temas(request, id):
 			fila_inicial = ['Tema', 'Fecha', 'Hora', 'Estado', 'Revisado por']
 			story.append(parrafo)
 			datos.append(fila_inicial)
-
 			for t in temas:
 				try:
-					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), t.revisado_por.get_full_name()]
+					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(),
+							t.revisado_por.get_full_name()]
 				except:
 					fila = [t.nombre, t.fecha, t.horario.get_inicio_display(), t.get_estado_display(), '-']
 				datos.append(fila)
@@ -89,11 +82,8 @@ def reporte_temas(request, id):
 			tabla.normalizeData(datos)
 			tabla.setStyle([('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black)])
 			tabla.setStyle([('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
-
-
 			story.append(tabla)
 			story.append(Spacer(0, 20))
-
 	doc = SimpleDocTemplate(docente.cedula + ".pdf", pagesize=A4, showBoundary=0)
 	doc.build(story)
 	output = open(docente.cedula + ".pdf")
@@ -624,31 +614,26 @@ def coordinador_asignaturas_xls_asig(request, id, id2):
 	docente = get_object_or_404(Docente, user_ptr=id)
 	periodo = get_object_or_404(Periodo, estado=True)
 	asignatura = get_object_or_404(Asignatura, codigo=id2)
-	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo, docente=docente, asignatura=asignatura)
+	asignaturas = DocenteAsignaturaPeriodo.objects.filter(periodo=periodo,
+														  docente=docente,
+														  asignatura=asignatura)
+
+
 	filename = docente.cedula + '-'+asignatura.codigo+'.xls'
-
-	# return HttpResponse(temas)
-
 	wb = xlsxwriter.Workbook(filename)
-
 	reporte = wb.add_worksheet('sheet1')
-
-	reporte.set_column(0, 0,30)
-	reporte.set_column(1, 0, 30)
-	reporte.set_column(2, 0, 30)
-	#reporte.set_column(4, 0, 90)
-
+	reporte.set_column(0, 0,35)
+	reporte.set_column(1, 0, 35)
+	reporte.set_column(2, 0, 35)
 	num_format = wb.add_format({
 		'num_format': '0',
 		'align': 'right',
 		'font_size': 12,
 
 	})
-
 	formato_negrita = wb.add_format({
 		'bold': True
 	})
-
 	general_format = wb.add_format({
 		'align': 'left',
 		'font_size': 12,
@@ -662,32 +647,23 @@ def coordinador_asignaturas_xls_asig(request, id, id2):
 		asignaturasClean.append(i.asignatura)
 	horario = Horario.objects.filter(asignatura__in=asignaturas)
 	temas = Tema.objects.filter(horario__in=horario, fecha__range=(periodo.fechainicio, periodo.fechafin))
-
 	reporte.merge_range(0, 0, 0, 2, asignatura.descripcion)
 	reporte.merge_range(1, 0, 1, 2, (docente.first_name + " " + docente.last_name))
-
 	reporte.write(3, 0, "Tema", formato_negrita)
 	reporte.write(3, 1, "Unidad", formato_negrita)
 	reporte.write(3, 2, "Estado", formato_negrita)
-
 	row = 3
-
 	valores = {'0':0, '1': 0, '2':0}
-
 	for tema in temas:
 		row += 1
 		reporte.write_row(row, 0, (tema.nombre, tema.unidad.nombre, tema.tema_string()))
 		valores[tema.estado] = valores[tema.estado] + 1
 
-
-
 	row = row + 3
-
 	reporte.write(row, 0, "Estado", formato_negrita)
 	reporte.write(row, 1, "Cantidad", formato_negrita)
 	row += 1
 	inicio = row
-
 	reporte.write(row, 0 , "Sin Revisar")
 	reporte.write(row, 1, valores['0'])
 	row += 1
@@ -696,27 +672,26 @@ def coordinador_asignaturas_xls_asig(request, id, id2):
 	row += 1
 	reporte.write(row, 0, "No Aprobados")
 	reporte.write(row, 1, valores['2'])
-
-
-
 	chart = wb.add_chart({'type': 'pie'})
-
 	chart.title_name = 'Temas'
-
 	chart.width = reporte._size_col(0)
-
-	values = '=%s!%s' % (reporte.name, xl_range_abs(inicio,1,inicio+2,1))
-	categories = '=%s!%s' % (reporte.name, xl_range_abs(inicio,0,inicio+2,0))
+	values = '=%s!%s' % (reporte.name, xl_range_abs(inicio, 1, inicio + 2, 1))
+	categories = '=%s!%s' % (reporte.name, xl_range_abs(inicio, 0, inicio + 2, 0))
 	chart.add_series({'values': values, 'categories': categories, 'smooth': True})
+	reporte.insert_chart(inicio + 4, 0, chart)
 
-	reporte.insert_chart(inicio+4, 0, chart)
+	chartBarras = wb.add_chart({'type': 'column'})
+	chartBarras.title_name = 'Temas'
+	chartBarras.width = reporte._size_col(0)
+	chartBarras.add_series({'values': values, 'categories': categories, 'smooth': True})
+	reporte.insert_chart(inicio + 4, 1, chartBarras)
+
 
 
 	wb.close()
 	output = open(filename)
 	nombre = 'attachment; filename='+filename
 	response = HttpResponse(output, content_type="application/ms-excel")
-	#response['Content-Disposition'] = 'attachment; filename=Excel.xls'
 	response['Content-Disposition'] = nombre
 	return response
 
@@ -734,14 +709,17 @@ def horario_docente_lista(request, id):
 
 @staff_member_required()
 def horario_docente_asignatura_horario(request, id_docente, id_asignatura):
-	docente = get_object_or_404(Docente, user_ptr=id_docente)
-	periodo = get_object_or_404(Periodo, estado=True)
-	asignatura = get_object_or_404(Asignatura, codigo = id_asignatura)
-	asignaturadocente = get_object_or_404(DocenteAsignaturaPeriodo, docente=docente,periodo=periodo,asignatura=asignatura)
-	horarios = Horario.objects.filter(asignatura=asignaturadocente).order_by('dia')
+	try:
+		docente = Docente.objects.get(user_ptr=id_docente)
+		periodo = Periodo.objects.get(estado=True)
+		asignatura = Asignatura.objects.get(codigo = id_asignatura)
+		asignaturadocente = DocenteAsignaturaPeriodo.objects.get(docente=docente,periodo=periodo,asignatura=asignatura)
+		horarios = Horario.objects.filter(asignatura=asignaturadocente).order_by('dia')
 
-	return render(request, 'coordinador/ver_horarios.html', {'horarios': horarios, 'asignatura':asignatura, 'docente':docente},
+		return render(request, 'coordinador/ver_horarios.html', {'horarios': horarios, 'asignatura':asignatura, 'docente':docente},
 				  context_instance=RequestContext(request))
+	except:
+		return HttpResponseRedirect(reverse('horario_docente_buscar')+"?existe=falso")
 
 @staff_member_required()
 def horario_docente_asignatura_horario_nuevo(request, id_docente, id_asignatura):
@@ -777,5 +755,39 @@ def horario_docente_asignatura_horario_nuevo(request, id_docente, id_asignatura)
 	return render(request, 'coordinador/crear_horario.html', {'form': form, 'asignatura': asignatura, 'docente':docente},
 				  context_instance=RequestContext(request))
 
+@staff_member_required()
+def horario_editar(request, id_docente, id_asignatura, id_horario):
+	periodo = Periodo.objects.get(estado=True)
+	if(Horario.objects.filter(id = id_horario, asignatura__docente__user_ptr=id_docente, asignatura__asignatura__codigo = id_asignatura).exists()):
+		hr = Horario.objects.get(id = id_horario)
+		docente = hr.asignatura.docente
+		asignaturas = DocenteAsignaturaPeriodo.objects.filter(docente=docente, periodo=periodo)
+		if request.method == 'POST':
+			form = HorarioEditForm(request.POST, instance=hr)
+			if form.is_valid():
+				horario = form.save(commit=False)
+				horarios = Horario.objects.filter(asignatura__in=asignaturas).exclude(id=id_horario)
 
+				for h in horarios:
+					if (h.inicio == horario.inicio) and (h.dia == horario.dia):
+						return render(request, 'coordinador/editar_horario.html',
+									  {'form': form, 'asignatura': hr.asignatura.asignatura, 'docente': docente, 'error': True},
+									  context_instance=RequestContext(request))
+				try:
+					horario.save()
+					return HttpResponseRedirect(reverse('horario_docente_asignatura_horario',
+														args=(id_docente, id_asignatura)) + "?editar=correcto")
+				except:
+					return render(request, 'coordinador/editar_horario.html',
+								  {'form': form, 'asignatura': hr.asignatura.asignatura, 'docente': docente, 'integridad': True},
+								  context_instance=RequestContext(request))
+		else:
+			form = HorarioEditForm(instance=hr)
+		return render(request, 'coordinador/editar_horario.html', {'form':form,
+																   'docente': hr.asignatura.docente,
+																   'asignatura': hr.asignatura.asignatura},
+					  context_instance=RequestContext(request))
+	else:
+		return HttpResponseRedirect(reverse('horario_docente_asignatura_horario',
+														args=(id_docente, id_asignatura)) + "?existe=falso")
 

@@ -40,7 +40,7 @@ class Horario(models.Model):
 
 	def __unicode__(self):
 		a = {0: 'Lunes', 1:'Martes', 2:'Miércoles', 3:'Jueves', 4: 'Viernes'}
-		return self.asignatura.asignatura.descripcion + ' - ' + a[int(self.dia)]
+		return self.asignatura.asignatura.descripcion + ' - ' + self.get_dia_display()
 
 	class Meta:
 		unique_together = ('asignatura', 'dia',)

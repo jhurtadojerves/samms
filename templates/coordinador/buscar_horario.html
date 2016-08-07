@@ -15,6 +15,11 @@
         </header>
 
         <div class="list-group" >
+            {% if request.GET.existe == "falso"%}
+        <div class="alert alert-danger" role="alert">
+            <b>¡Lo Sentimos!</b> El elemento que está buscando no existe
+        </div>
+        {% endif %}
             <br><br>
             <form id="search" method="get" action="#">
                 <label for="">Buscar Docente:</label><br><input type="text" name="query" placeholder="Buscar Docente. Cédula, Nombre, Apellido" id="busqueda" class="form-control"/>
@@ -36,7 +41,7 @@
              success : function(data) {
 
                     for (i=0;i<data.length;i++){
-                        $("#resultDocente").append("<a class='list-group-item' target=__blank href=docente/"+data[i].id+"/asignaturas >"+data[i].first_name + " " + data[i].last_name+"</a>");
+                        $("#resultDocente").append("<a class='list-group-item' href=docente/"+data[i].id+"/asignaturas >"+data[i].first_name + " " + data[i].last_name+"</a>");
                     }
                     if(consulta == ""){$("#resultDocente").text("");}
                     if(data.length<1){
