@@ -24,7 +24,7 @@ class FechasReporte(forms.Form):
 class EstudianteForm(forms.Form):
     cedula = forms.CharField(max_length=11, label='Cedula Estudiante', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
- 
+
     for i in c:
         options.append((i.codigo, i.nombre))
     carrera = forms.ChoiceField(choices=options)

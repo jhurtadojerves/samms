@@ -38,7 +38,7 @@ from reportlab.platypus import Image
 from reportlab.platypus import SimpleDocTemplate
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.platypus import Table
 
@@ -84,7 +84,7 @@ def reporte_temas(request, id):
 			tabla.setStyle([('BOX', (0, 0), (-1, -1), 0.25, colors.black)])
 			story.append(tabla)
 			story.append(Spacer(0, 20))
-	doc = SimpleDocTemplate(docente.cedula + ".pdf", pagesize=A4, showBoundary=0)
+	doc = SimpleDocTemplate(docente.cedula + ".pdf", pagesize=landscape(A4), showBoundary=0, displayDocTitle=1, title="Reporte "+docente.get_full_name())
 	doc.build(story)
 	output = open(docente.cedula + ".pdf")
 	response = HttpResponse(output, content_type='application/pdf')
@@ -459,11 +459,6 @@ def ver_reporte_input_fechas(request, id):
 	story.append(parrafo)
 	story.append(Spacer(0, 10))
 
-
-
-
-	# cabecera.backColor = colors.blue
-
 	estilo = estiloHoja['BodyText']
 	# asigestudiante = DocenteAsignaturaPeriodoEstudiante.objects.filter(docenteasignatura__in=asigperiodo, estudiante = estudiante)
 	#horario = Horario.objects.filter(asignatura__in=asigperiodo)
@@ -499,7 +494,7 @@ def ver_reporte_input_fechas(request, id):
 			story.append(Spacer(0, 10))
 			parrafo = Paragraph(ahora, cabecera)
 			story.append(parrafo)
-			doc = SimpleDocTemplate(docente.cedula + "-"+asignatura.codigo+".pdf", pagesize=A4, showBoundary=0)
+			doc = SimpleDocTemplate(docente.cedula + "-"+asignatura.codigo+".pdf", pagesize=landscape(A4), showBoundary=0)
 			doc.build(story)
 			output = open(docente.cedula + "-"+asignatura.codigo+".pdf")
 			response = HttpResponse(output, content_type='application/pdf')

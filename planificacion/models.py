@@ -38,16 +38,5 @@ class Tema(models.Model):
 
 	def dia_string(self):
 		return Tema.horario.get_dia_display()
-
-	'''def clean(self):
-		try:
-			if ((int(self.horario.dia )!= int(self.fecha.weekday()))):
-				raise forms.ValidationError('El día y la fecha no coinciden')
-			else:
-				return self
-		except:
-			#return self
-			raise forms.ValidationError('Horario no definido')
-	'''
 	class Meta:
 		unique_together = ('unidad', 'fecha',)

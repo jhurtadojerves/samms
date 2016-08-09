@@ -37,7 +37,7 @@ from reportlab.platypus import Image
 from reportlab.platypus import SimpleDocTemplate
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.platypus import Table
 
@@ -243,7 +243,7 @@ def ver_reporte_input_fechas(request, id):
 
 			parrafo = Paragraph("Generado por: " + estudiante.get_full_name() + " " + ahora, cabecera)
 
-			doc = SimpleDocTemplate(estudiante.cedula + "-"+asignatura.codigo+".pdf", pagesize=A4, showBoundary=0)
+			doc = SimpleDocTemplate(estudiante.cedula + "-"+asignatura.codigo+".pdf", pagesize=landscape(A4), showBoundary=0)
 			doc.build(story)
 			output = open(estudiante.cedula + "-"+asignatura.codigo+".pdf")
 			response = HttpResponse(output, content_type='application/pdf')
